@@ -1,0 +1,322 @@
+:root {
+    /* theme Colors */
+    --accent-color: #444444; 
+    --main-color: #222222;  
+    --border-color: #333333; 
+    --input-register-color: #1A1A1A; 
+    --random-color: #2A2A2A; 
+    
+    /* Utility Colors */
+    --text-color-dark: #333333; 
+    --text-color: #DDDDDD; 
+    --text-mix-color: #FFFFFF; 
+    --input-icon-color: #777777; 
+
+    /* Status Colors */
+    --success-color: #154e2d; 
+    --error-color: #8C0000;
+    --weak-color: #7a1212;
+    --medium-color: #eeca00;
+}
+
+/* Global Reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', Roboto, Arial, sans-serif;
+    color: var(--text-color);
+    min-height: 100vh;
+}
+
+/* Main Layout Container */
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--accent-color);
+}
+
+/* Auth Card */
+.login-box {
+    background: var(--text-mix-color); 
+    color: var(--text-color-dark);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-box h2 {
+    color: var(--main-color); 
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.subtitle {
+    color: var(--border-color);
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+.subtitle.reset{
+    font-size: 13px;
+    text-align: left;
+    margin-bottom: 1rem;
+    font-weight: 500;
+    color: var(--text-mix-color);
+    background-color: var(--accent-color);
+    filter: brightness(1);
+    opacity: 0.9; 
+    padding: 6px;
+    border-radius: 4px;
+}
+
+.reset-click {
+    color: var(--success-color);
+}
+
+/* Input Styles */
+.input-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px 35px 10px 35px; 
+    border: 1px solid var(--random-color);
+    border-radius: 5px;
+    font-size: 1rem;
+    color: var(--accent-color);
+    transition: border-color 0.2s;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+.input-group i {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--input-icon-color);
+}
+
+
+.toggle-password:hover {
+    color: var(--accent-color);
+}
+
+i.toggle-password {
+    left: auto; 
+    right: 15px; 
+    cursor: pointer;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #666;
+    font-size: 16px;
+    z-index: 2;
+    background: none;
+    border: none;
+    padding: 5px;
+}
+
+.toggle-password i {
+    pointer-events: none;
+}
+
+.options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+}
+
+/* Button Styles */
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--accent-color);
+    color: var(--text-mix-color);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    transition: background-color 0.2s;
+}
+
+.login-btn:hover {
+    background: var(--main-color);
+}
+
+.google-login {
+    background-color: var(--success-color);
+    color: var(--text-mix-color);
+}
+
+.register-text {
+    text-align: center;
+    color: var(--input-register-color); 
+    margin-bottom: 15px;
+}
+
+.register-text a,
+.forgot-password {
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.register-text a:hover,
+.forgot-password:hover {
+    color: var(--main-color);
+    text-decoration: underline;
+}
+
+/* Password Strength Meter */
+.password-strength {
+    margin: 10px 0;
+}
+
+.strength-meter {
+    height: 4px;
+    background: #ddd;
+    border-radius: 2px;
+}
+
+.strength-meter::before {
+    content: '';
+    display: block;
+    height: 100%;
+    width: 0;
+    transition: width 0.3s;
+    border-radius: 2px;
+}
+
+.strength-text {
+    font-size: 13px;
+    margin-top: 5px;
+    font-weight: 600;
+    color: var(--accent-color);
+}
+
+.weak::before { width: 33%; background: var(--weak-color); }
+.medium::before { width: 66%; background: var(--medium-color); }
+.strong::before { width: 100%; background: var(--success-color); }
+
+.input-group.confirm-password-group {
+    position: relative; 
+}
+
+i.password-match-icon, 
+i.password-mismatch-icon {
+    position: absolute;
+    left: auto; 
+    right: 45px; 
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+    display: none;
+    color: var(--text-mix-color); 
+    background-color: var(--main-color); 
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+    text-align: center;
+    font-size: 10px;
+    font-style: normal;
+}
+
+i.password-match-icon {
+    background-color: var(--success-color); 
+}
+
+i.password-mismatch-icon {
+    background-color: var(--error-color); 
+}
+
+/* Toast Styles */
+.toast {
+    visibility: hidden;
+    min-width: 250px;
+    margin-left: -125px;
+    background-color: var(--main-color);
+    color: var(--text-mix-color);
+    text-align: center;
+    border-radius: 8px;
+    padding: 16px;
+    position: fixed;
+    z-index: 9999;
+    left: 50%;
+    bottom: 30px;
+    opacity: 0;
+    transition: opacity 0.4s, visibility 0.4s;
+}
+
+.toast.show {
+    visibility: visible;
+    opacity: 1;
+}
+
+.toast.success {
+    background-color: #4CAF50; 
+}
+
+.toast.error {
+    background-color: #f44336; 
+}
+
+@media (max-width: 600px) {
+    .login-container {
+        padding: 0 16px; 
+    }
+
+    .login-box {
+        padding: 1.5rem;
+        max-width: 100%;
+        margin-top: 30px; 
+        margin-bottom: 30px;
+    }
+
+    .subtitle,
+    .subtitle.reset {
+        font-size: 0.95rem;
+    }
+
+    .input-group input {
+        font-size: 0.98rem;
+    }
+    
+    .options {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        font-size: 0.95rem;
+    }
+    
+    .toast {
+        width: 90%;
+        margin-left: -45%;
+        left: 50%;
+    }
+}
