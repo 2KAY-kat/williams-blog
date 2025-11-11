@@ -24,11 +24,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 showToast('Passwords do not match.', 'error');
                 return;
             }
-            endpoint = '/api/auth/register'; 
+            endpoint = '/backend/api/auth/register.php'; 
         } else {
             delete data.name; 
             delete data.confirm_password; 
-            endpoint = '/api/auth/login'; 
+            endpoint = '/backend/api/auth/login'; 
         }
         
         try {
