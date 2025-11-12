@@ -1,8 +1,7 @@
 import { showToast } from './toast.js'; 
 import { isSigningUp } from './auth-validation.js';
 
-// Define the base URL for your API, based on your Laragon virtual host
-// This MUST match the URL of your backend API
+// Defining the base URL for API, based on your Laragon virtual host
 const BASE_API_URL = 'http://williams-blog.test'; 
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -21,7 +20,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const data = Object.fromEntries(formData.entries());
         
         let endpoint = '';
-        let isLogin = false;
         
         if (isSigningUp) { 
             // --- SIGN UP ---
@@ -29,14 +27,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 showToast('Passwords do not match.', 'error');
                 return;
             }
-            // Use the correct Slim route
+            // url Slim route on the virtual host
             endpoint = `${BASE_API_URL}/auth/register`; 
         } else {
             // --- LOGIN ---
-            isLogin = true;
             delete data.name; // 'name' field from signup.html
             delete data.confirm_password; 
-            // Use the correct Slim route
+            // url Slim route on the virtual host
             endpoint = `${BASE_API_URL}/auth/login`; 
         }
         
@@ -47,6 +44,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 body: JSON.stringify(data)
             });
             
+            // Check for CORS or network issues first
+            if (!response.ok && response.status === 0) {
+                throw new Error('CORS or Network issue. Check Laragon server status and API virtual host.');
+            }
+
             const result = await response.json();
 
             if (response.ok) {
@@ -60,13 +62,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     localStorage.setItem('token', result.token);
                     localStorage.setItem('blogger', JSON.stringify(result.blogger));
                     
-                    // Redirect to the admin dashboard (we will create this later)
+                    // Redirect to the admin dashboard
                     setTimeout(() => {
-                        // We assume dashboard.html is in an 'admin' folder at the same level as 'auth'
-                        // Adjust this path if your file structure is different
-                        // Let's assume `signup.html` is in `frontend/public/`
-                        window.location.href = '../admin/dashboard.html'; // Adjust this path
-                    }, 1500); // Wait 1.5s for toast
+                        window.location.href = '../admin/dashboard.html'; 
+                    }, 1500); 
                 }
             } else {
                 // Show backend error message
