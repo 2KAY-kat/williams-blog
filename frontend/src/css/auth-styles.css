@@ -1,3 +1,5 @@
+    @import url(./fontawesome-free-6.6.0-web/fontawesome-free-6.6.0-web/css/all.css);
+
 :root {
     /* theme Colors */
     --accent-color: #132440;
@@ -19,6 +21,12 @@
     --error-color: #BF092F;
     --weak-color: #BF092F;
     --medium-color: #3B9797;
+
+    /* border radius */
+    --btn-border-radius: 4px;
+    --post-border-radius: 8px;
+    --featured-post-border-radius: 12px;
+    --circle-border-radius: 100%;
 }
 
 
@@ -31,8 +39,6 @@
 
 body {
     font-family: 'Inter', Roboto, Arial, sans-serif;
-    color: var(--text-color);
-    min-height: 100vh;
 }
 
 /* Main Layout Container */
@@ -41,13 +47,11 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--accent-color);
 }
 
 /* Auth Card */
 .login-box {
-    background: var(--input-register-color); 
-    color: var(--text-color-dark);
+    background: var(--border-color); 
     padding: 2rem;
     border-radius: 10px;
     box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
@@ -56,13 +60,13 @@ body {
 }
 
 .login-box h2 {
-    color: var(--accent-common-color); 
+    color: var(--error-color); 
     margin-bottom: 0.5rem;
     text-align: center;
 }
 
 .subtitle {
-    color: var(--accent-common-color); 
+    color: var(--border-color); 
     text-align: center;
     margin-bottom: 2rem;
     font-size: 1.1rem;
@@ -75,8 +79,7 @@ body {
     text-align: left;
     margin-bottom: 1rem;
     font-weight: 500;
-    color: var(--text-mix-color);
-    background-color: var(--accent-color);
+    color: var(--border-color);
     filter: brightness(1);
     opacity: 0.9; 
     padding: 6px;
@@ -105,7 +108,7 @@ body {
 
 .input-group input:focus {
     outline: none;
-    border-color: var(--accent-color);
+    border-color: var(--input-icon-color);
 }
 
 .input-group i {
@@ -113,7 +116,7 @@ body {
     left: 10px;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--accent-common-color);
+    color: var(--medium-color);
 }
 
 
