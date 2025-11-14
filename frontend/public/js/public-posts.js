@@ -69,18 +69,27 @@ function createPostCard(post) {
     });
 
     card.innerHTML = `
-        <img src="${imageUrl}" alt="${post.title}" class="post-card-image" onerror="this.onerror=null; this.src='https://placehold.co/600x400/2A2A2A/DDDDDD?text=Image+Missing';">
-        <div class="post-card-body">
-            <h3><a href="#" class="text-accent">${post.title}</a></h3>
-            <p>${post.content_preview}...</p>
+        
+        <img src="${imageUrl}" alt="${post.title}" class="post-card-image" onerror="this.onerror=null; this.src='https://placehold.co/600x400/2A2A2A/DDDDDD?text=Image+Missing';"/>
+            <div class="post-card-body">
+                <h3><a href="#" class="text-accent">${post.title}</a></h3>
+                <p>
+                    ${post.content_preview}...
+                </p>
             <div class="post-card-meta">
-                <span class="author"><i class="fas fa-user"></i> ${post.author_name}</span>
-                <span class="date"><i class="fas fa-calendar-alt"></i> ${date}</span>
+            <div class="author">
+                <i class="fas fa-user"></i> 
+                ${post.author_name}
             </div>
-            <div class="post-card-meta mt-2">
-                <span class="categories"><i class="fas fa-tags"></i> ${categories}</span>
+                <span class="date">
+                <i class="fas fa-calendar-alt"></i> 
+                ${date}</span>
+            <div class="category">
+                <i class="fas fa-tags"></i> 
+                ${categories}
             </div>
-        </div>
-    `;
+            </div>
+
+            `;
     return card;
 }

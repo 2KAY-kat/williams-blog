@@ -21,6 +21,12 @@
     --error-color: #BF092F;
     --weak-color: #BF092F;
     --medium-color: #3B9797;
+
+    /* border radius */
+    --btn-border-radius: 4px;
+    --post-border-radius: 8px;
+    --featured-post-border-radius: 12px;
+    --circle-border-radius: 100%;
 }
 
 /* Global Reset */
@@ -81,7 +87,7 @@ header {
 .logo {
     font-size: 1.5rem;
     font-weight: bold;
-    color: var(--input-register-color);
+    color: var(--text-mix-color);
     text-decoration: none;
     display: flex;
     align-items: flex-start;
@@ -115,21 +121,19 @@ header {
     margin-bottom: 15px;
 }
 
-.main-nav.footer-nav a {
-    color: var(--accent-common-color);
-}
-
-.main-nav.footer-nav a:hover {
-    color: var(--medium-color);
-}
-
-
 .cta-link {
     background-color: var(--input-register-color);
-    color: var(--light-text) !important;
     padding: 0.5rem 1rem;
-    border-radius: 4px;
+    border-radius: var(--btn-border-radius);
     font-weight: 600;
+}
+
+.cta-link.icon {
+    background: var(--border-color);
+}
+
+.cta-link.icon:hover {
+    background: var(--text-mix-color) !important;
 }
 
 .cta-link:hover {
@@ -170,6 +174,7 @@ header {
 /* Featured Story Section */
 .featured-story-section {
     padding: 4rem 0;
+    margin-top: 4rem;
     background-color: var(--primary-color);
 }
 
@@ -178,7 +183,7 @@ header {
     gap: 0;
     align-items: center;
     background-color: var(--secondary-color);
-    border-radius: 12px;
+    border-radius: var(--featured-post-border-radius);
     overflow: hidden;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     min-height: 450px;
@@ -204,13 +209,39 @@ header {
     justify-content: center;
 }
 
+.featured-btn {
+    padding: .5rem;
+    background: var(--text-color-dark);
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    font-style: italic;
+    display: flex;
+    width: fit-content;
+    border-radius: var(--btn-border-radius);
+    font-weight: 700;
+    color: var(--accent-common-color);
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+}
+
+.category {
+    padding: .5rem;
+    background: var(--border-color);
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    font-style: italic;
+    display: flex;
+    width: fit-content;
+    border-radius: var(--btn-border-radius);
+}
+
 .featured-category {
-    text-transform: uppercase;
     font-weight: 700;
     color: var(--accent-color);
     font-size: 0.9rem;
     margin-bottom: 0.75rem;
-    letter-spacing: 2px;
 }
 
 .featured-title {
@@ -270,7 +301,7 @@ header {
 /* Post Card Styling */
 .post-card {
     background-color: var(--card-bg);
-    border-radius: 8px;
+    border-radius: var(--post-border-radius);
     overflow: hidden;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s, box-shadow 0.3s;
@@ -322,15 +353,10 @@ header {
 }
 
 .author .author-img {
-    border-radius: 100%;
+    border-radius: var(--circle-border-radius);
     border: 2px solid var(--accent-common-color);
     width: 35px;
     height: auto;
-}
-
-.post-card-meta .categories {
-    font-style: italic;
-    color: var(--error-color);
 }
 
 .load-parent {
@@ -359,7 +385,6 @@ header {
 /* Footer */
 .main-footer {
     background-color: var(--border-color);
-    color: var(--text-color);
     padding-top: 10px;
     margin-bottom: 0;
     padding-bottom: 0;
@@ -378,12 +403,12 @@ header {
 
 .footer-nav a {
     display: inline;
-    color: var(--accent-common-color);
+    color: var(--input-register-color);
     margin: 0 1.2rem;
 }
 
 .footer-nav a:hover {
-    color: var(--input-register-color);
+    color: var(--accent-common-color);
     transition: 0.5s ease-in-out;
 }
 
