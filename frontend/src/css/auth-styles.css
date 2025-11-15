@@ -262,12 +262,12 @@ i.password-mismatch-icon {
 }
 
 /* Toast Styles */
-.toast {
+/* .toast {
     visibility: hidden;
     min-width: 250px;
     margin-left: -125px;
-    background-color: var(--main-color);
-    color: var(--text-mix-color);
+    background-color: var(--border-color);
+    color: var(--r);
     text-align: center;
     border-radius: 8px;
     padding: 16px;
@@ -290,7 +290,7 @@ i.password-mismatch-icon {
 
 .toast.error {
     background-color: #f44336; 
-}
+} */
 
 @media (max-width: 600px) {
     .login-container {
@@ -320,9 +320,9 @@ i.password-mismatch-icon {
         font-size: 0.95rem;
     }
     
-    .toast {
+    /* .toast {
         width: 90%;
         margin-left: -45%;
         left: 50%;
-    }
+    } */
 }

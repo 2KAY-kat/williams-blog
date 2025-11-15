@@ -1,64 +1,64 @@
-import { showToast } from './toast.js'; 
+import { showToast } from './toast.js';
 import { isSigningUp } from './auth-validation.js';
-import { BASE_API_URL } from './utils.js'; // Import the new utility
+import { BASE_API_URL } from './utils.js';
 
-document.addEventListener('DOMContentLoaded', function () {
-    
+document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('auth-form');
+    if (!form) return;
 
-    if (!form) {
-        console.error("Auth form not found!");
-        return;
-    }
-
-    form.addEventListener('submit', async function(e) {
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
-        
-        let endpoint = '';
-        
-        if (isSigningUp) { 
-            
-            if (data.password !== data['confirm_password']) {
-                showToast('Passwords do not match.', 'error');
-                return;
-            }
-            // Use the globally defined BASE_API_URL
-            endpoint = `${BASE_API_URL}/auth/register`; 
-        } else {
-            delete data.name; 
-            delete data.confirm_password; 
-            // Use the globally defined BASE_API_URL
-            endpoint = `${BASE_API_URL}/auth/login`; 
+
+        let endpoint = isSigningUp
+            ? `${BASE_API_URL}/auth/register`
+            : `${BASE_API_URL}/auth/login`;
+
+        if (isSigningUp && data.password !== data.confirm_password) {
+            showToast('Passwords do not match.', 'error');
+            console.log('passwords donr match');
         }
-        
+
+        if (!isSigningUp) {
+            delete data.name;
+            delete data.confirm_password;
+        }
+
         try {
             const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
-            
-            if (response.ok) {
-                const result = await response.json();
-                
-                // Save the JWT token to local storage
-                localStorage.setItem('auth_token', result.token);
-                
-                showToast('Action successful! Redirecting to dashboard...', 'success');
-                
-                // Redirect to the dashboard page (relative path from /src/auth/ to /src/admin/)
-                window.location.href = '../admin/dashboard.html';
 
-            } else {
-                const error = await response.json();
-                showToast(error.message || 'An error occurred during authentication.', 'error');
+            // Log raw response for debugging
+            const text = await response.text();
+            showToast('')
+            console.log('Raw response:', text);
+
+            let result;
+            try {
+                result = JSON.parse(text);
+            } catch (e) {
+                throw new Error('Invalid JSON from server. Check API URL.');
             }
-        } catch (error) {
-            // Note: This often happens if the API URL is wrong or the server is offline.
-            showToast('Network error. Check your API domain and connection.', 'error');
+
+            if (response.ok) {
+                localStorage.setItem('auth_token', result.token);
+                showToast('Success! Redirecting...', 'success');
+                setTimeout(() => {
+                    // window.location.href = '../admin/dashboard.html';
+                }, 1000);
+
+                console.log('success redirecting to admin ...');
+            } else {
+                showToast(result.error || result.message || 'Request failed.', 'error');
+            }
+        } catch (err) {
+            console.error('Auth error:', err);
+            showToast(err.message || 'Network error. Check console.', 'error');
         }
     });
 });
