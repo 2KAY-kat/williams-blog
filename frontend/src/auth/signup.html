@@ -8,7 +8,6 @@
     <title>Williams Kaphika | Signup</title>
     <link rel="stylesheet" href="../css/auth-styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
-
 </head>
 
 <body class="login-page">
@@ -48,7 +47,13 @@
                     <p class="strength-text"></p>
                 </div>
                 
-                <button type="submit" class="login-btn" id="auth-button">Sign up</button>
+                <button type="submit" class="login-btn" id="auth-button">
+                    <span class="btn-text">Sign up</span>
+                    <span class="btn-spinner" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </span>
+                </button>
+
                 <div class="toast-notification" id="message"></div>
                 
                 <p class="register-text">
