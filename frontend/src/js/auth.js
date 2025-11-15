@@ -52,19 +52,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error('Invalid JSON from server.');
             }
 
+            // lets differentiate responses for each request
+
             if (response.ok) {
                 localStorage.setItem('auth_token', result.token);
-                showToast('Success! Redirecting...', 'success');
+
+                //  for my guy register/login endpoint in a dynamic message genaration
+                const action = isSigningUp ? 'Registration' : 'Login';
+                showToast(`${action} successful! Redirecting to dashboard...`, 'success');
+
                 setTimeout(() => {
                     window.location.href = '../admin/dashboard.html';
                 }, 1200);
             } else {
-                showToast(result.error || result.message || 'Request failed.', 'error');
+                const action = isSigningUp ? 'registration' : 'login';
+                const serverMsg = result.error || result.message || 'Unknown error';
+                showToast(`Failed to ${action}: ${serverMsg}`, 'error');
                 resetButton();
             }
         } catch (err) {
             console.error('Auth error:', err);
-            showToast(err.message || 'Network error.', 'error');
+            showToast(`Network error: ${err.message}`, 'error');
             resetButton();
         }
 
