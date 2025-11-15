@@ -122,7 +122,7 @@ header {
 }
 
 .cta-link {
-    background-color: var(--input-register-color);
+    background: var(--medium-color);
     padding: 0.5rem 1rem;
     border-radius: var(--btn-border-radius);
     font-weight: 600;
@@ -369,7 +369,7 @@ header {
 .load-more {
     margin-top: 2rem;
     color: var(--input-icon-color);
-    background: var(--accent-common-color);
+    background: var(--medium-color);
     display: flex;
     align-items: center;
     justify-content: center;

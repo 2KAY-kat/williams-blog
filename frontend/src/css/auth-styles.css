@@ -66,7 +66,7 @@ body {
 }
 
 .subtitle {
-    color: var(--border-color); 
+    color: var(--medium-color); 
     text-align: center;
     margin-bottom: 2rem;
     font-size: 1.1rem;
@@ -116,7 +116,7 @@ body {
     left: 10px;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--medium-color);
+    color: var(--border-color);
 }
 
 
@@ -160,10 +160,10 @@ i.toggle-password {
 .login-btn {
     width: 100%;
     padding: 12px;
-    background: var(--accent-common-color);
-    color: var(--text-mix-color);
+    background: var(--medium-color);
+    color: var(--accent-color);
     border: none;
-    border-radius: 5px;
+    border-radius: var(--btn-border-radius);
     cursor: pointer;
     font-size: 1rem;
     margin-bottom: 1rem;
@@ -198,7 +198,7 @@ i.toggle-password {
 
 .login-btn:hover {
     background: var(--text-color-dark);
-    color: var(--accent-common-color);
+    color: var(--medium-color);
 }
 
 .google-login {
@@ -208,20 +208,18 @@ i.toggle-password {
 
 .register-text {
     text-align: center;
-    color: var(--error-color); 
+    color: var(--medium-color); 
     margin-bottom: 15px;
 }
 
-.register-text a,
-.forgot-password {
-    color: var(--random-color);
+.register-text a {
+    color: var(--accent-color);
     text-decoration: none;
     transition: color 0.2s;
 }
 
-.register-text a:hover,
-.forgot-password:hover {
-    color: var(--input-icon-color);
+.register-text a:hover {
+    color: var(--medium-color);
 }
 
 /* Password Strength Meter */
@@ -269,7 +267,7 @@ i.password-mismatch-icon {
     z-index: 3;
     display: none;
     color: var(--text-mix-color); 
-    background-color: var(--main-color); 
+    background-color: var(--accent-color); 
     border-radius: 50%;
     width: 18px;
     height: 18px;
@@ -280,7 +278,7 @@ i.password-mismatch-icon {
 }
 
 i.password-match-icon {
-    background-color: var(--success-color); 
+    background-color: var(--border-color); 
 }
 
 i.password-mismatch-icon {
