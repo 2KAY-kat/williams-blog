@@ -154,6 +154,16 @@ function openModal(post = null) {
         `;
     }).join('');
     
+
+    const currentImageUrlInput = document.getElementById('current-image-url');
+    const imageFileInput = document.getElementById('image-file-input');
+    const previewText = document.getElementById('image-preview-text');
+
+    // Reset file input and preview text
+    imageFileInput.value = '';
+    previewText.style.display = 'none';
+    currentImageUrlInput.value = '';
+
     // Fill in post data for editing
     if (post) {
         title.textContent = 'Edit Post';
@@ -162,6 +172,14 @@ function openModal(post = null) {
         form.main_image_url.value = post.main_image_url || '';
         form.ispublished.checked = post.ispublished === 1; 
         form.postid.value = post.postid; 
+
+
+        const imageUrl = post.main_image_url;
+        if (imageUrl) {
+            currentImageUrlInput.value = imageUrl;
+            previewText.textContent = `Current image: ${imageUrl.split('/').pop()}`;
+            previewText.style.display = 'block';
+        }
     } else {
         title.textContent = 'Add New Post';
     }
@@ -184,34 +202,54 @@ async function handlePostSubmit(e) {
     btnText.textContent = 'Saving...';
     spinner.style.display = 'inline-block';
 
-    const data = {
-        title: form.title.value,
-        content: form.content.value,
-        main_image_url: form.main_image_url.value,
-        is_published: form.ispublished.checked ? 1 : 0, 
-        categories: Array.from(form.querySelectorAll('input[name="categories"]:checked'))
-            .map(cb => parseInt(cb.value)) 
-    };
+    // CRITICAL FIX: Use FormData for file upload compatibility
+    const formData = new FormData();
 
+    // 1. Gather text and checkbox data
+    formData.append('title', form.title.value);
+    formData.append('content', form.content.value);
+    formData.append('is_published', form.ispublished.checked ? 1 : 0);
+    
+    // 2. Add categories (as IDs)
+    Array.from(form.querySelectorAll('input[name="categories"]:checked'))
+        .forEach(cb => formData.append('categories[]', parseInt(cb.value)));
+
+    // 3. Handle Image Upload or Existing URL
+    const fileInput = document.getElementById('image-file-input');
+    const currentImageUrl = document.getElementById('current-image-url').value;
+
+    if (fileInput.files.length > 0) {
+        // If a new file is selected, append the file itself
+        formData.append('image_file', fileInput.files[0]);
+    } else {
+        // If no new file, but there is an existing URL (for update), keep it.
+        formData.append('main_image_url', currentImageUrl);
+    }
+    
+    // Use name="postid" from HTML input
     const postId = form.postid.value; 
     
-    const method = postId ? 'PUT' : 'POST';
+    const method = postId ? 'POST' : 'POST'; // Slim uses POST for PUT/DELETE with method override
     const url = postId 
         ? `${BASE_API_URL}/posts/${postId}` 
         : `${BASE_API_URL}/posts`;
 
+    // Slim framework expects a method override for PUT/PATCH/DELETE when using FormData
+    if (postId) {
+        formData.append('_method', 'PUT'); // Instruct Slim to treat this as a PUT request
+    }
+
     try {
         const res = await fetch(url, {
-            method,
+            method: 'POST', // Always POST when sending FormData or using method override
             headers: {
-                'Content-Type': 'application/json',
+                // IMPORTANT: DO NOT set 'Content-Type': 'application/json' when using FormData!
                 Authorization: `Bearer ${token}`
             },
-            body: JSON.stringify(data)
+            body: formData // Send the FormData object
         });
 
         const result = await res.json();
-        // Check if status is in the success range (200s)
         if (!res.ok) throw new Error(result.error || 'Failed to save post');
 
         showToast(`Post ${postId ? 'updated' : 'created'} successfully!`, 'success');
@@ -232,11 +270,11 @@ async function editPost(postId) {
             headers: { Authorization: `Bearer ${token}` }
         });
         
-        // The PostController::show returns the post object directly
         const post = await res.json(); 
         
         if (!res.ok) throw new Error(post.error || 'Failed to fetch post for edit');
         
+        // Pass the full post object to openModal
         openModal(post); 
     } catch (err) {
         showToast(`Error: ${err.message}`, 'error');

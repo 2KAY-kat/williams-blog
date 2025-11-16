@@ -67,9 +67,12 @@
           <textarea name="content" rows="6" required></textarea>
         </div>
         <div class="input-group">
-          <label>Main Image URL</label>
-          <input type="url" name="main_image_url" placeholder="https://..." />
-        </div>
+    <label>Main Image</label>
+    <input type="hidden" name="main_image_url" id="current-image-url" /> 
+    
+    <input type="file" name="image_file" id="image-file-input" accept="image/*" />
+    <p id="image-preview-text" style="margin-top: 5px; font-size: 0.85em; color: #555; display: none;"></p>
+</div>
         <div class="input-group">
           <label>Categories</label>
           <div id="categories-checkboxes"></div>
