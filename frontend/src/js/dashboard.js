@@ -126,13 +126,13 @@ function openModal(post = null) {
   }
 
 //   // Categories
-//   const container = document.getElementById('categories-checkboxes');
-//   container.innerHTML = allCategories.map(cat => `
-//     <label><input type="checkbox" name="categories" value="${cat.category_id}"
-//       ${post?.categories?.includes(cat.category_id) ? 'checked' : ''}>
-//       ${cat.name}
-//     </label>
-//   `).join('');
+  const container = document.getElementById('categories-checkboxes');
+  container.innerHTML = allCategories.map(cat => `
+    <label><input type="checkbox" name="categories" value="${cat.name}"
+      ${post?.categories?.includes(cat.name) ? 'checked' : ''}>
+      ${cat.name}
+    </label>
+  `).join('');
 
   modal.style.display = 'block';
 }
