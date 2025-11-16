@@ -1,18 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Williams Kaphika | The Growth Mindset - HOME</title>
-    <link rel="stylesheet" href="../css/main.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Williams Blog | Dashboard</title>
+  <link rel="stylesheet" href="../css/dashboard.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
 </head>
-<body>
-    <header>
-        
-    </header>
+<body class="dashboard-page">
+  <div class="dashboard-container">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="logo">
+        <h2>Williams Blog</h2>
+      </div>
+      <nav class="nav">
+        <a href="#" class="nav-link active" data-view="posts"><i class="fas fa-file-alt"></i> Posts</a>
+        <a href="#" class="nav-link" data-view="profile"><i class="fas fa-user"></i> Profile</a>
+        <a href="#" id="logout-btn" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </nav>
+    </aside>
 
-    
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <header class="header">
+        <h1 id="page-title">My Posts</h1>
+        <button id="add-post-btn" class="btn-primary">+ New Post</button>
+      </header>
 
-    <script type="module" src="../js/index.js"></script>
+      <section id="posts-view" class="view active">
+        <div id="posts-list"></div>
+      </section>
+
+      <section id="profile-view" class="view" style="display: none;">
+        <div class="profile-card">
+          <h2>Profile</h2>
+          <form id="profile-form">
+            <div class="input-group">
+              <label>Full Name</label>
+              <input type="text" name="full_name" required />
+            </div>
+            <div class="input-group">
+              <label>Email</label>
+              <input type="email" name="email" required />
+            </div>
+            <button type="submit" class="btn-primary">Update Profile</button>
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- MODALS -->
+  <div id="post-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2 id="modal-title">Add Post</h2>
+      <form id="post-form">
+        <input type="hidden" name="postid" />
+        <div class="input-group">
+          <label>Title</label>
+          <input type="text" name="title" required />
+        </div>
+        <div class="input-group">
+          <label>Content</label>
+          <textarea name="content" rows="6" required></textarea>
+        </div>
+        <div class="input-group">
+          <label>Main Image URL</label>
+          <input type="url" name="main_image_url" placeholder="https://..." />
+        </div>
+        <div class="input-group">
+          <label>Categories</label>
+          <div id="categories-checkboxes"></div>
+        </div>
+        <div class="input-group checkbox">
+          <label><input type="checkbox" name="ispublished" /> Publish</label>
+        </div>
+        <button type="submit" class="btn-primary">
+          <span class="btn-text">Save Post</span>
+          <span class="btn-spinner" style="display: none;"><i class="fas fa-spinner fa-spin"></i></span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="../js/dashboard.js"></script>
 </body>
 </html>

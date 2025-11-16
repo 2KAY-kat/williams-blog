@@ -78,7 +78,7 @@ async function fetchPublicPosts() {
     postsContainer.innerHTML = '<p id="loading-message">Loading latest articles...</p>';
     
     try {
-        const response = await fetch(`${BASE_API_URL}/posts/public`);
+        const response = await fetch(`${BASE_API_URL}/posts`);
         
         if (!response.ok) {
             throw new Error(`API returned status: ${response.status}`);
