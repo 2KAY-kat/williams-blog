@@ -140,9 +140,7 @@ function createPostCard(post) {
     // Use main_image_url as a fallback since thumbnail_url is not in the schema
     const imageUrl = post.thumbnail_url || post.main_image_url || 'https://placehold.co/600x400/2A2A2A/DDDDDD?text=No+Image';
     
-    // FIX: Show categories as comma-separated IDs (or names if implemented)
     const categories = post.categories && post.categories.length > 0 ? post.categories.join(', ') : 'Uncategorized';
-    
     // Formatting the date
     const date = new Date(post.created_at).toLocaleDateString('en-US', {
         year: 'numeric', month: 'short', day: 'numeric'
