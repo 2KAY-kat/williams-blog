@@ -95,15 +95,15 @@ async function fetchPublicPosts() {
         console.error('Error fetching posts:', error);
         
         const featuredLoading = document.getElementById('loading-featured');
-        if (featuredLoading) featuredLoading.textContent = 'Failed to load featured story. Check API.';
+        if (featuredLoading) featuredLoading.textContent = 'Failed to load featured story';
         
         const loadingGridMessage = document.getElementById('grid-loading-status');
         if (loadingGridMessage) loadingGridMessage.remove();
         
-        postsContainer.innerHTML = 'Failed to load articles. Check server status.';
+        postsContainer.innerHTML = 'Failed to load articles ...';
         if (loadMoreButton) loadMoreButton.style.display = 'none';
         
-        showToast('Could not connect to the blog API.', 'error');
+        showToast('Could not connect to the sever. Try reloading.', 'error');
     }
 }
 
@@ -134,8 +134,8 @@ function createPostCard(post) {
             </p>
         <div class="post-card-meta">
         <div class="author">
-            <i class="fas fa-user"></i> 
-            ${post.author_name}
+            
+           <!-- // <i class="fas fa-user"></i> --> ${post.author_name}
         </div>
             <span class="date">
             <i class="fas fa-calendar-alt"></i> 

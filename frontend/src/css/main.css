@@ -324,10 +324,10 @@ header {
     padding: 1.5rem;
 }
 
-.post-card-body h3 {
+.post-card-body .text-accent {
     font-size: 1.4rem;
     margin-bottom: 0.5rem;
-    color: var(--accent-common-color);
+    color: var(--accent-color);
 }
 
 .post-card-body p {
