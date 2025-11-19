@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const view = link.dataset.view;
             document.getElementById('page-title').textContent = view === 'posts' ? 'My Posts' : 'Profile';
             views.forEach(v => v.style.display = 'none');
-            document.getElementById(`${view}-view`).style.display = 'block';
+            document.getElementById(`${view}-view`).style.display = 'flex';
             navLinks.forEach(n => n.classList.remove('active'));
             link.classList.add('active');
             if (view === 'posts') loadPosts();
@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function loadPosts() {
-    const list = document.getElementById('posts-list');
+    const list = document.getElementById('posts-container');
     list.innerHTML = '<p>Loading posts...</p>';
     try {
         const res = await fetch(`${BASE_API_URL}/posts?blogger_id=${bloggerId}`, {
@@ -83,12 +83,12 @@ async function loadPosts() {
         list.innerHTML = posts.length ? '' : '<p>No posts yet. Create your first!</p>';
         
         posts.forEach(post => {
-            const div = document.createElement('div');
-            div.className = 'post-card';
+            const card = document.createElement('div');
+            card.className = 'post-card';
             
             const postId = post.postid; 
             
-            div.innerHTML = `
+            card.innerHTML = `
                 <h3>${post.title}</h3>
                 <p><small>Created: ${new Date(post.created_at).toLocaleDateString()}</small></p>
                 <p><strong>Status:</strong> <span class="status ${post.ispublished ? 'published' : 'draft'}">
@@ -99,7 +99,7 @@ async function loadPosts() {
                     <button class="btn-delete" data-id="${postId}">Delete</button>
                 </div>
             `;
-            list.appendChild(div);
+            list.appendChild(card);
         });
 
         document.querySelectorAll('.btn-edit').forEach(btn => {

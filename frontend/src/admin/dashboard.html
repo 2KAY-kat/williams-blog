@@ -12,11 +12,13 @@
     <!-- SIDEBAR -->
     <aside class="sidebar">
       <div class="logo">
-        <h2>Williams Blog</h2>
+       <!-- header logo looks wacky -->
       </div>
       <nav class="nav">
+        <a href="/" class="nav-link"><i class="fas fa-home"></i> Home</a>
         <a href="#" class="nav-link active" data-view="posts"><i class="fas fa-file-alt"></i> Posts</a>
         <a href="#" class="nav-link" data-view="profile"><i class="fas fa-user"></i> Profile</a>
+        <a href="#" class="nav-link" data-view="profile"><i class="fas fa-subscrib"></i> Subscribers</a>
         <a href="#" id="logout-btn" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
       </nav>
     </aside>
@@ -25,12 +27,17 @@
     <main class="main-content">
       <header class="header">
         <h1 id="page-title">My Posts</h1>
-        <button id="add-post-btn" class="btn-primary">+ New Post</button>
+        <button id="add-post-btn" class="cta-link subscribe-btn">+ New Post</button>
       </header>
 
+      <div class="viwes-dash">
       <section id="posts-view" class="view active">
-        <div id="posts-list"></div>
-      </section>
+        <div class="posts-grid" id="posts-container">
+
+        </div>
+          </section>
+      </div>
+    
 
       <section id="profile-view" class="view" style="display: none;">
         <div class="profile-card">
@@ -44,10 +51,11 @@
               <label>Email</label>
               <input type="email" name="email" required />
             </div>
-            <button type="submit" class="btn-primary">Update Profile</button>
+            <button type="submit" class="cta-link subscribe-btn">Update Profile</button>
           </form>
         </div>
       </section>
+    </div>
     </main>
   </div>
 
@@ -80,7 +88,7 @@
         <div class="input-group checkbox">
           <label><input type="checkbox" name="ispublished" /> Publish</label>
         </div>
-        <button type="submit" class="btn-primary">
+        <button type="submit" class="cta-link subscribe-btn">
           <span class="btn-text">Save Post</span>
           <span class="btn-spinner" style="display: none;"><i class="fas fa-spinner fa-spin"></i></span>
         </button>
