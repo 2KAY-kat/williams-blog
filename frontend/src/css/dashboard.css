@@ -98,6 +98,19 @@ display: grid;
   margin-bottom: 1rem;
 }
 
+.posts-heading-prev {
+  margin-bottom:  .5rem;
+}
+
+.posts-content-prev {
+  color: var(--accent-color);
+  margin-bottom: 2rem;
+}
+
+.details-meta {  
+  display: inline-flex; 
+} 
+
 .actions {
   margin-top:10px;
 }
@@ -119,9 +132,11 @@ display: grid;
 
 .modal {
   position: fixed;
-  top: 0; left: 0; right:0; bottom: 0;
-  background: rgba(0,0,0,0.5);
+  top: 0; 
+  left: 0;  
+   bottom: 0; 
   display: flex;
+  width: 500px;
   align-items: center;
   justify-content: center;
   z-index: 1000;
@@ -130,9 +145,7 @@ display: grid;
 .modal-content {
   background: white;
   padding: 2rem;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 600px;
+  border-radius: 12px; 
   position: relative;
 }
 
@@ -167,8 +180,11 @@ display: grid;
   align-items: center;
   gap: 8px;
 }
-
-#categories-checkboxes label {
-  display: block;
-  margin: 8px 0;
+ 
+.category-checkbox {
+  margin-top: 3px;
 }
+
+/* #categories-checkboxes label {
+  display: block; 
+} */

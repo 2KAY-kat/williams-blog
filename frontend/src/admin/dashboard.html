@@ -15,10 +15,10 @@
        <!-- header logo looks wacky -->
       </div>
       <nav class="nav">
-        <a href="/" class="nav-link"><i class="fas fa-home"></i> Home</a>
-        <a href="#" class="nav-link active" data-view="posts"><i class="fas fa-file-alt"></i> Posts</a>
+        <a href="#" class="nav-link active" data-view="home"><i class="fas fa-home"></i> Home</a>
+        <a href="#" class="nav-link" data-view="posts"><i class="fas fa-file-alt"></i> Posts</a>
         <a href="#" class="nav-link" data-view="profile"><i class="fas fa-user"></i> Profile</a>
-        <a href="#" class="nav-link" data-view="profile"><i class="fas fa-subscrib"></i> Subscribers</a>
+        <a href="#" class="nav-link" data-view="subscribers"><i class="fas fa-bell"></i> Subscribers</a>
         <a href="#" id="logout-btn" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
       </nav>
     </aside>
@@ -26,18 +26,21 @@
     <!-- MAIN CONTENT -->
     <main class="main-content">
       <header class="header">
-        <h1 id="page-title">My Posts</h1>
+        <h1 id="page-title">Home</h1>
         <button id="add-post-btn" class="cta-link subscribe-btn">+ New Post</button>
       </header>
 
       <div class="viwes-dash">
-      <section id="posts-view" class="view active">
+
+        <section id="home-view" class="view active ">
+          
+       </section>
+
+      <section id="posts-view" class="view">
         <div class="posts-grid" id="posts-container">
 
         </div>
-          </section>
-      </div>
-    
+       </section> 
 
       <section id="profile-view" class="view" style="display: none;">
         <div class="profile-card">
@@ -55,6 +58,8 @@
           </form>
         </div>
       </section>
+
+      </div>
     </div>
     </main>
   </div>
@@ -80,7 +85,7 @@
     
     <input type="file" name="image_file" id="image-file-input" accept="image/*" />
     <p id="image-preview-text" style="margin-top: 5px; font-size: 0.85em; color: #555; display: none;"></p>
-</div>
+  </div>
         <div class="input-group">
           <label>Categories</label>
           <div id="categories-checkboxes"></div>

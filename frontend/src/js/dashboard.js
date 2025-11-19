@@ -89,11 +89,19 @@ async function loadPosts() {
             const postId = post.postid; 
             
             card.innerHTML = `
-                <h3>${post.title}</h3>
-                <p><small>Created: ${new Date(post.created_at).toLocaleDateString()}</small></p>
-                <p><strong>Status:</strong> <span class="status ${post.ispublished ? 'published' : 'draft'}">
+                <h3 class="posts-heading-prev">${post.title}</h3> 
+                <p class="posts-content-prev">
+                    ${post.content_preview}
+                </p>
+
+                <div class="details-meta">
+                <p><small> ${new Date(post.created_at).toLocaleDateString()}</small></p>
+                </div>
+                <div class="details-meta">
+                <p><strong> </strong> <span class="status ${post.ispublished ? 'published' : 'draft'}">
                     ${post.ispublished ? 'Published' : 'Draft'}
                 </span></p>
+                </div>
                 <div class="actions">
                     <button class="btn-edit" data-id="${postId}">Edit</button>
                     <button class="btn-delete" data-id="${postId}">Delete</button>
@@ -147,7 +155,7 @@ function openModal(post = null) {
         
         return `
             <label>
-                <input type="checkbox" name="categories" value="${cat.category_id}" 
+                <input type="checkbox" class="category-checkbox " name="categories" value="${cat.category_id}" 
                 ${isChecked ? 'checked' : ''}>
                 ${cat.name}
             </label>
