@@ -113,6 +113,12 @@ body { font-family: 'Segoe UI', sans-serif; background: #f4f6f9; }
 #home-view {
   justify-content: center;
   align-items: center;
+  min-height: 400px;
+}
+
+#home-view h2 {
+  font-size: 2rem;
+  color: var(--accent-color);
 }
 
 #posts-view {
@@ -270,6 +276,26 @@ body { font-family: 'Segoe UI', sans-serif; background: #f4f6f9; }
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 0.5rem;
+}
+
+/* Profile Card */
+.profile-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  max-width: 500px;
+}
+
+.profile-card h2 {
+  margin-bottom: 1.5rem;
+  color: var(--accent-color);
+}
+
+.profile-card button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 1rem;
 }
 
 /* Responsive Design */
