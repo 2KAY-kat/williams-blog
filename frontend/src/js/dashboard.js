@@ -16,6 +16,68 @@ try {
     window.location.href = '../auth/signup.html';
 }
 
+// State Management
+const DASHBOARD_STATE_KEY = 'dashboard_active_view';
+
+function saveActiveView(viewName) {
+    try {
+        localStorage.setItem(DASHBOARD_STATE_KEY, viewName);
+    } catch (err) {
+        console.warn('Failed to save active view:', err);
+    }
+}
+
+function getActiveView() {
+    try {
+        const saved = localStorage.getItem(DASHBOARD_STATE_KEY);
+        return saved || 'home'; // Default to 'home' if not found
+    } catch (err) {
+        console.warn('Failed to retrieve active view:', err);
+        return 'home';
+    }
+}
+
+function switchView(viewName, navLinks) {
+    const views = document.querySelectorAll('.view');
+    const targetView = document.getElementById(`${viewName}-view`);
+    
+    if (!targetView) {
+        console.error(`View ${viewName}-view not found`);
+        return;
+    }
+    
+    // Hide all views
+    views.forEach(v => {
+        v.classList.remove('active');
+    });
+    
+    // Show selected view
+    targetView.classList.add('active');
+    
+    // Update active nav link
+    navLinks.forEach(link => {
+        if (link.dataset.view === viewName) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
+    });
+    
+    // Update page title
+    const viewTitle = viewName === 'posts' ? 'My Posts' : viewName.charAt(0).toUpperCase() + viewName.slice(1);
+    document.getElementById('page-title').textContent = viewTitle;
+    
+    // Save state
+    saveActiveView(viewName);
+    
+    // Load data based on view
+    if (viewName === 'posts') {
+        loadPosts();
+    } else if (viewName === 'profile') {
+        loadProfile();
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const views = document.querySelectorAll('.view');
     const navLinks = document.querySelectorAll('.nav-link');
@@ -32,30 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             
             const view = link.dataset.view;
-            const viewTitle = view === 'posts' ? 'My Posts' : view.charAt(0).toUpperCase() + view.slice(1);
-            document.getElementById('page-title').textContent = viewTitle;
-            
-            // Hide all views
-            views.forEach(v => {
-                v.classList.remove('active');
-            });
-            
-            // Show selected view
-            const targetView = document.getElementById(`${view}-view`);
-            if (targetView) {
-                targetView.classList.add('active');
-            }
-            
-            // Update active nav link
-            navLinks.forEach(n => n.classList.remove('active'));
-            link.classList.add('active');
-            
-            // Load data based on view
-            if (view === 'posts') {
-                loadPosts();
-            } else if (view === 'profile') {
-                loadProfile();
-            }
+            switchView(view, navLinks);
         });
     });
 
@@ -73,13 +112,17 @@ document.addEventListener('DOMContentLoaded', () => {
     logoutBtn.addEventListener('click', (e) => {
         e.preventDefault();
         localStorage.removeItem('auth_token');
+        localStorage.removeItem(DASHBOARD_STATE_KEY); // Clear dashboard state on logout
         showToast('Logged out successfully.', 'success');
         setTimeout(() => window.location.href = '../auth/signup.html', 1000);
     });
 
     // Initial load
     loadCategories();
-    loadPosts();
+    
+    // Restore previous active view or default to home
+    const savedView = getActiveView();
+    switchView(savedView, navLinks);
 });
 
 async function loadPosts() {
