@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Loading Post...</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+        body {
+            background: linear-gradient(120deg, #f7fafd 0%, #e9eef6 100%);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        main {
+            margin-top: 6rem;
+            margin-bottom: 3rem;
+        }
+        .post-wrapper {
+            max-width: 760px;
+            margin: 48px auto 0 auto;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(44, 62, 80, 0.10), 0 1.5px 4px rgba(44, 62, 80, 0.03);
+            padding: 0 0 48px 0;
+            overflow: hidden;
+        }
+        .post-header {
+            padding: 48px 48px 0 48px;
+            background: linear-gradient(90deg, #f8fafc 60%, #f1f5fa 100%);
+            border-bottom: 1px solid #e6eaf1;
+        }
+        .post-category {
+            display: inline-block;
+            background: #eaf3fa;
+            color: #1e3a5c;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 6px 18px;
+            border-radius: 16px;
+            margin-bottom: 18px;
+        }
+        .post-title {
+            font-size: 2.7rem;
+            font-weight: 900;
+            color: #1a2233;
+            margin-bottom: 18px;
+            line-height: 1.15;
+            letter-spacing: -1px;
+        }
+        .post-meta {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+            font-size: 1rem;
+            color: #6b7a90;
+            margin-bottom: 0;
+        }
+        .post-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .post-meta i {
+            color: #bf092f;
+            font-size: 1.1em;
+        }
+        .post-figure {
+            margin: 0;
+            width: 100%;
+            background: #f3f6fa;
+            border-bottom: 1px solid #e6eaf1;
+        }
+        .post-figure img {
+            width: 100%;
+            max-height: 420px;
+            object-fit: cover;
+            display: block;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 2px 12px rgba(44, 62, 80, 0.07);
+        }
+        #post-content {
+            padding: 40px 48px 0 48px;
+            line-height: 1.85;
+            font-size: 1.13rem;
+            color: #232b3b;
+            word-break: break-word;
+        }
+        #post-content p {
+            margin-bottom: 1.7em;
+        }
+        #post-content h2, #post-content h3 {
+            font-weight: 800;
+            margin-top: 2.2em;
+            margin-bottom: 0.7em;
+            color: #1a2233;
+        }
+        #post-content blockquote {
+            border-left: 4px solid #bf092f;
+            background: #f9f9fb;
+            color: #3b3b3b;
+            margin: 1.5em 0;
+            padding: 1em 1.5em;
+            font-style: italic;
+        }
+        #post-content pre {
+            background: #f4f6fa;
+            border-radius: 6px;
+            padding: 1em;
+            overflow-x: auto;
+            font-size: 0.98em;
+        }
+        .state-message {
+            text-align: center;
+            padding: 80px 0;
+            border-radius: 8px;
+            margin: 40px auto;
+            max-width: 600px;
+            background-color: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .state-message i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #4299e1;
+        }
+        .error-message i {
+            color: #f56565;
+        }
+        @media (max-width: 900px) {
+            .post-wrapper { max-width: 98vw; }
+            .post-header, #post-content { padding-left: 18px; padding-right: 18px; }
+        }
+        @media (max-width: 600px) {
+            .post-header, #post-content { padding: 16px 8px 0 8px; }
+            .post-title { font-size: 1.5rem; }
+            .post-meta { flex-direction: column; align-items: flex-start; gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <!-- Optionally, add a minimal nav or logo here -->
+    </header>
+    <main>
+        <div class="post-wrapper">
+            <!-- Loading State -->
+            <div id="loading-state" class="state-message">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Fetching article content...</p>
+            </div>
+            <!-- Error State -->
+            <div id="error-state" class="state-message error-message" style="display: none;">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p id="error-message-text">Could not load the requested article.</p>
+            </div>
+            <!-- Post Content -->
+            <article id="post-container" style="display: none;">
+                <!-- Post Header -->
+                <div class="post-header">
+                    <div id="post-category" class="post-category"></div>
+                    <div id="post-title" class="post-title"></div>
+                    <div class="post-meta">
+                        <span id="post-author"></span>
+                        <span id="post-date"></span>
+                    </div>
+                </div>
+                <!-- Post Image -->
+                <figure class="post-figure">
+                    <img id="post-image" 
+                         src="https://placehold.co/800x400/cccccc/333333?text=Featured+Image" 
+                         alt="Featured image for the post" 
+                         onerror="this.onerror=null; this.src='https://placehold.co/800x400/cccccc/333333?text=Image+Not+Found';" />
+                </figure>
+                <!-- Article Body -->
+
+                <section id="post-content">
+                    <!-- Post content (HTML) will be injected here -->
+                </section>
+            </article>
+        </div>
+    </main>
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-nav">
+                <a href="../index.html">Home</a>
+                <a href="#">About me</a>
+                <a href="#">Self-improvement</a>
+                <a href="#">The Physics Paradox</a>
+                <a href="#">AI and EdTech</a>
+                <a href="#">Contact</a>
+            </div>
+            <p>&copy; 2024 Williams Kaphika. All rights reserved.</p>
+        </div>
+    </footer>
+    <script type="module" src="../js/post.js"></script>
+    <script type="module" src="../js/index.js"></script> 
+</body>
+</html>

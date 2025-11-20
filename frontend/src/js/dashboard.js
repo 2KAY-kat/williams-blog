@@ -280,7 +280,7 @@ async function editPost(postId) {
         
         const post = await res.json(); 
         
-        if (!res.ok) throw new Error(post.error || 'Failed to fetch post for edit');
+        if (!res.ok) throw new Error(post.error || 'Failed to fetch post for edit'); 
         
         // Pass the full post object to openModal
         openModal(post); 
@@ -298,9 +298,9 @@ async function deletePost(postId) {
         });
         
         // The endpoint returns 200/204 on success, or an error object on failure
-        if (!res.ok) {
-             const result = await res.json();
-             throw new Error(result.error || 'Failed to delete');
+        if (!res.ok) { 
+            const result = await res.json(); 
+            throw new Error(result.error || 'Failed to delete');
         }
         
         showToast('Post deleted.', 'success');

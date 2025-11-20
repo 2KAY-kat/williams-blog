@@ -16,6 +16,7 @@ export default defineConfig({
                 main: resolve(__dirname, "src/index.ejs"),
                 signup: resolve(__dirname, "src/auth/signup.html"),
                 dashboard: resolve(__dirname, "src/admin/dashboard.html"),
+                post: resolve(__dirname, "src/post/post.html"),
                 // Add other HTML files here as you create them (e.g., single-post.html)
             },
         },

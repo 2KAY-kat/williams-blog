@@ -33,7 +33,7 @@ function renderFeaturedPost(post) {
         </div>
         <div class="featured-content">
             <p class="featured-category">${categories}</p>
-            <a href="#" class="featured-title">${post.title}</a>
+            <a href="./post/post.html?id=${post.postid}" class="featured-title">${post.title}</a>
             <p class="featured-excerpt">${post.content_preview}</p>
             <div class="featured-meta">
                 <span class="author"><i class="fas fa-user"></i> ${post.author_name}</span>
@@ -128,7 +128,7 @@ function createPostCard(post) {
     card.innerHTML = `
         <img src="${imageUrl}" alt="${post.title}" class="post-card-image" onerror="this.onerror=null; this.src='https://placehold.co/600x400/2A2A2A/DDDDDD?text=Image+Missing';"/>
         <div class="post-card-body">
-            <h3><a href="#" class="text-accent">${post.title}</a></h3>
+            <h3><a href="./post/post.html?id=${post.postid}" class="text-accent">${post.title}</a></h3>
             <p>
                 ${post.content_preview}
             </p>
