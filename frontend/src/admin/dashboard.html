@@ -12,14 +12,14 @@
     <!-- SIDEBAR -->
     <aside class="sidebar">
       <div class="logo"> 
-        <!-- header logo looks wacky -->
+        <h2>WB</h2>
       </div>
       <nav class="nav">
-        <a href="#" class="nav-link active" data-view="home"><i class="fas fa-home"></i> Home</a>
-        <a href="#" class="nav-link" data-view="posts"><i class="fas fa-file-alt"></i> Posts</a>
-        <a href="#" class="nav-link" data-view="profile"><i class="fas fa-user"></i> Profile</a>
-        <a href="#" class="nav-link" data-view="subscribers"><i class="fas fa-bell"></i> Subscribers</a>
-        <a href="#" id="logout-btn" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        <a href="#" class="nav-link active" data-view="home" data-label="Home"><i class="fas fa-home"></i> <span>Home</span></a>
+        <a href="#" class="nav-link" data-view="posts" data-label="Posts"><i class="fas fa-file-alt"></i> <span>Posts</span></a>
+        <a href="#" class="nav-link" data-view="profile" data-label="Profile"><i class="fas fa-user"></i> <span>Profile</span></a>
+        <a href="#" class="nav-link" data-view="subscribers" data-label="Subscribers"><i class="fas fa-bell"></i> <span>Subscribers</span></a>
+        <a href="#" id="logout-btn" class="nav-link" data-label="Logout"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
       </nav>
     </aside>
 
@@ -32,35 +32,33 @@
 
       <div class="viwes-dash">
 
-        <section id="home-view" class="view active ">
-          
-       </section>
+        <section id="home-view" class="view active">
+          <h2>Welcome to your Dashboard</h2>
+        </section>
 
-      <section id="posts-view" class="view">
-        <div class="posts-grid" id="posts-container">
+        <section id="posts-view" class="view">
+          <div class="posts-grid" id="posts-container">
+          </div>
+        </section> 
 
-        </div>
-       </section> 
-
-      <section id="profile-view" class="view" style="display: none;">
-        <div class="profile-card">
-          <h2>Profile</h2>
-          <form id="profile-form">
-            <div class="input-group">
-              <label>Full Name</label>
-              <input type="text" name="full_name" required />
-            </div>
-            <div class="input-group">
-              <label>Email</label>
-              <input type="email" name="email" required />
-            </div>
-            <button type="submit" class="cta-link subscribe-btn">Update Profile</button>
-          </form>
-        </div>
-      </section>
+        <section id="profile-view" class="view">
+          <div class="profile-card">
+            <h2>Profile</h2>
+            <form id="profile-form">
+              <div class="input-group">
+                <label>Full Name</label>
+                <input type="text" name="full_name" required />
+              </div>
+              <div class="input-group">
+                <label>Email</label>
+                <input type="email" name="email" required />
+              </div>
+              <button type="submit" class="cta-link subscribe-btn">Update Profile</button>
+            </form>
+          </div>
+        </section>
 
       </div>
-    </div>
     </main>
   </div>
 
@@ -80,12 +78,11 @@
           <textarea name="content" rows="6" required></textarea>
         </div>
         <div class="input-group">
-    <label>Main Image</label>
-    <input type="hidden" name="main_image_url" id="current-image-url" /> 
-    
-    <input type="file" name="image_file" id="image-file-input" accept="image/*" />
-    <p id="image-preview-text" style="margin-top: 5px; font-size: 0.85em; color: #555; display: none;"></p>
-  </div>
+          <label>Main Image</label>
+          <input type="hidden" name="main_image_url" id="current-image-url" /> 
+          <input type="file" name="image_file" id="image-file-input" accept="image/*" />
+          <p id="image-preview-text" style="margin-top: 5px; font-size: 0.85em; color: #555; display: none;"></p>
+        </div>
         <div class="input-group">
           <label>Categories</label>
           <div id="categories-checkboxes"></div>

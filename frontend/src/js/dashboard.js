@@ -11,12 +11,10 @@ try {
     const payload = JSON.parse(atob(token.split('.')[1]));
     bloggerId = payload.data.id;
 } catch (e) {
-    // If token is invalid/malformed, redirect
     console.error("Invalid token format:", e);
     localStorage.removeItem('auth_token');
     window.location.href = '../auth/signup.html';
 }
-
 
 document.addEventListener('DOMContentLoaded', () => {
     const views = document.querySelectorAll('.view');
@@ -33,11 +31,20 @@ document.addEventListener('DOMContentLoaded', () => {
             if (link.id === 'logout-btn') return;
             e.preventDefault();
             const view = link.dataset.view;
-            document.getElementById('page-title').textContent = view === 'posts' ? 'My Posts' : 'Profile';
-            views.forEach(v => v.style.display = 'none');
-            document.getElementById(`${view}-view`).style.display = 'flex';
+            const viewTitle = view === 'posts' ? 'My Posts' : view.charAt(0).toUpperCase() + view.slice(1);
+            document.getElementById('page-title').textContent = viewTitle;
+            
+            views.forEach(v => {
+                v.classList.remove('active');
+                v.style.display = 'none';
+            });
+            
+            const targetView = document.getElementById(`${view}-view`);
+            targetView.classList.add('active');
+            
             navLinks.forEach(n => n.classList.remove('active'));
             link.classList.add('active');
+            
             if (view === 'posts') loadPosts();
             if (view === 'profile') loadProfile();
         });
@@ -72,11 +79,9 @@ async function loadPosts() {
             headers: { Authorization: `Bearer ${token}` }
         });
         
-        // The endpoint returns an array directly, not an object with 'success'
         const posts = await res.json();
         
         if (!res.ok) {
-            // Check if the response is an object with an error key
             throw new Error(posts.error || 'Failed to load posts');
         }
 
@@ -90,17 +95,12 @@ async function loadPosts() {
             
             card.innerHTML = `
                 <h3 class="posts-heading-prev">${post.title}</h3> 
-                <p class="posts-content-prev">
-                    ${post.content_preview}
-                </p>
-
+                <p class="posts-content-prev">${post.content_preview}</p>
                 <div class="details-meta">
-                <p><small> ${new Date(post.created_at).toLocaleDateString()}</small></p>
-                </div>
-                <div class="details-meta">
-                <p><strong> </strong> <span class="status ${post.ispublished ? 'published' : 'draft'}">
+                  <small>${new Date(post.created_at).toLocaleDateString()}</small>
+                  <span class="status ${post.ispublished ? 'published' : 'draft'}">
                     ${post.ispublished ? 'Published' : 'Draft'}
-                </span></p>
+                  </span>
                 </div>
                 <div class="actions">
                     <button class="btn-edit" data-id="${postId}">Edit</button>
@@ -126,7 +126,6 @@ async function loadCategories() {
     try {
         const res = await fetch(`${BASE_API_URL}/categories`);
 
-        // The endpoint is likely returning a simple array of category objects: [{id: 1, name: 'All'}, ...]
         allCategories = await res.json(); 
         
         if (!res.ok) throw new Error('Failed to fetch categories');
@@ -147,7 +146,6 @@ function openModal(post = null) {
 
     // Categories Checkbox Logic
     const container = document.getElementById('categories-checkboxes');
-    // When editing, the post object contains an array of category NAMES (strings)
     const postCategoryNames = post?.categories || []; 
 
     container.innerHTML = allCategories.map(cat => {
@@ -237,7 +235,7 @@ async function handlePostSubmit(e) {
     // Use name="postid" from HTML input
     const postId = form.postid.value; 
     
-    const method = postId ? 'POST' : 'POST'; // Slim uses POST for PUT/DELETE with method override
+    // Slim uses POST for PUT/DELETE with method override
     const url = postId 
         ? `${BASE_API_URL}/posts/${postId}` 
         : `${BASE_API_URL}/posts`;
