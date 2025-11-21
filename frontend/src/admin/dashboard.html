@@ -24,15 +24,99 @@
 
     <!-- MAIN CONTENT -->
     <main class="main-content">
-      <header class="header">
-        <h1 id="page-title">Home</h1>
+            <header class="header">
+        <div class="header-left">
+          <a href="../../index.html" class="back-to-blog-btn" title="Back to Blog">
+            <i class="fas fa-arrow-left"></i>
+            <span>Back to Blog</span>
+          </a>
+          <h1 id="page-title">Home</h1>
+        </div>
         <button id="add-post-btn" class="cta-link subscribe-btn">+ New Post</button>
       </header>
 
       <div class="viwes-dash">
 
         <section id="home-view" class="view">
-          <h2>Welcome to your Dashboard</h2> 
+          <div class="onboarding-container">
+            <div class="onboarding-header">
+              <h2>Welcome back, <span id="blogger-name">Blogger</span>! 👋</h2>
+              <p class="onboarding-subtitle">Let's make your blog amazing</p>
+            </div>
+
+            <div class="onboarding-grid">
+              <!-- Write Post Card -->
+              <div class="onboarding-card">
+                <div class="card-icon write-icon">
+                  <i class="fas fa-pen-fancy"></i>
+                </div>
+                <h3>Create Your First Post</h3>
+                <p>Share your thoughts, ideas, and expertise with your audience</p>
+                <button class="onboarding-btn" data-action="write">
+                  Start Writing
+                  <i class="fas fa-arrow-right"></i>
+                </button>
+              </div>
+
+              <!-- View Posts Card -->
+              <div class="onboarding-card">
+                <div class="card-icon posts-icon">
+                  <i class="fas fa-file-alt"></i>
+                </div>
+                <h3>Manage Your Posts</h3>
+                <p>Edit, publish, or delete your posts and track their performance</p>
+                <button class="onboarding-btn" data-action="posts">
+                  View Posts
+                  <i class="fas fa-arrow-right"></i>
+                </button>
+              </div>
+
+              <!-- Profile Card -->
+              <div class="onboarding-card">
+                <div class="card-icon profile-icon">
+                  <i class="fas fa-user-circle"></i>
+                </div>
+                <h3>Complete Your Profile</h3>
+                <p>Update your information to personalize your blogging experience</p>
+                <button class="onboarding-btn" data-action="profile">
+                  Edit Profile
+                  <i class="fas fa-arrow-right"></i>
+                </button>
+              </div>
+
+              <!-- Subscribers Card -->
+              <div class="onboarding-card">
+                <div class="card-icon subscribers-icon">
+                  <i class="fas fa-bell"></i>
+                </div>
+                <h3>Connect with Subscribers</h3>
+                <p>Engage with your audience and build a loyal community</p>
+                <button class="onboarding-btn" data-action="subscribers">
+                  View Subscribers
+                  <i class="fas fa-arrow-right"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="onboarding-stats">
+              <div class="stat-item">
+                <div class="stat-number" id="stat-posts">0</div>
+                <div class="stat-label">Total Posts</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number" id="stat-subscribers">0</div>
+                <div class="stat-label">Subscribers</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number" id="stat-published">0</div>
+                <div class="stat-label">Published</div>
+              </div>
+            </div>
+
+            <div class="onboarding-footer">
+              <p>Need help? Check our <a href="#" class="help-link">documentation</a></p>
+            </div>
+          </div>
         </section>
 
         <section id="posts-view" class="view">

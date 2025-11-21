@@ -136,6 +136,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial load
     loadCategories();
     
+    loadBloggerGreeting();
+    
+    // Load dashboard stats
+    loadDashboardStats();
+    
+    // Onboarding card button handlers
+    document.querySelectorAll('.onboarding-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const action = btn.dataset.action;
+            switchView(action, navLinks);
+        });
+    });
     // Restore previous active view or default to home
     const savedView = getActiveView();
     switchView(savedView, navLinks);
@@ -542,5 +554,71 @@ async function loadProfile() {
     } catch (err) {
         console.error('Error loading profile:', err);
         showToast(`Error: ${err.message}`, 'error');
+    }
+}
+
+async function loadBloggerGreeting() {
+    try {
+        const res = await fetch(`${BASE_API_URL}/blogger`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        if (!res.ok) return;
+        
+        const user = await res.json();
+        const nameElement = document.getElementById('blogger-name');
+        if (nameElement && user.full_name) {
+            nameElement.textContent = user.full_name.split(' ')[0]; // First name only
+        }
+    } catch (err) {
+        console.error('Error loading blogger name:', err);
+    }
+}
+
+async function loadDashboardStats() {
+    try {
+        const res = await fetch(`${BASE_API_URL}/posts?blogger_id=${bloggerId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        if (!res.ok) return;
+        
+        const posts = await res.json();
+        
+        if (!Array.isArray(posts)) return;
+        
+        const totalPosts = posts.length;
+        const publishedPosts = posts.filter(p => p.ispublished === 1 || p.ispublished === true).length;
+        
+        // Update stat elements
+        const statsPostsEl = document.getElementById('stat-posts');
+        const statsPublishedEl = document.getElementById('stat-published');
+        
+        if (statsPostsEl) statsPostsEl.textContent = totalPosts;
+        if (statsPublishedEl) statsPublishedEl.textContent = publishedPosts;
+        
+        // Load subscriber count (if you have this endpoint)
+        loadSubscriberCount();
+    } catch (err) {
+        console.error('Error loading dashboard stats:', err);
+    }
+}
+
+async function loadSubscriberCount() {
+    try {
+        const res = await fetch(`${BASE_API_URL}/subscribers?blogger_id=${bloggerId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        if (!res.ok) return;
+        
+        const subscribers = await res.json();
+        const count = Array.isArray(subscribers) ? subscribers.length : 0;
+        
+        const statsSubscribersEl = document.getElementById('stat-subscribers');
+        if (statsSubscribersEl) statsSubscribersEl.textContent = count;
+    } catch (err) {
+        console.log('Note: Subscriber endpoint may not be available yet');
+        showToast('Note: Subscriber endpoint may not be available yet', 'info');
     }
 }
