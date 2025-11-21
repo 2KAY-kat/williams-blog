@@ -20,25 +20,46 @@ function renderFeaturedPost(post) {
         imageUrl = BASE_API_URL + post.main_image_url; 
     }
     
-    const categories = post.categories.length > 0 ? post.categories[0] : 'General'; 
+    const categories = post.categories && post.categories.length > 0 
+        ? post.categories[0] 
+        : 'General'; 
     
     const date = new Date(post.created_at).toLocaleDateString('en-US', {
         year: 'numeric', month: 'long', day: 'numeric'
     });
 
+    const excerpt = post.content_preview || 'Discover what\'s new in this featured article.';
+
     container.innerHTML = `
         <div class="featured-image-wrapper">
-            <img src="${imageUrl}" alt="${post.title}" class="featured-image" 
-                onerror="this.onerror=null; this.src='https://placehold.co/800x400/222222/DDDDDD?text=Image+Missing';">
+            <img 
+                src="${imageUrl}" 
+                alt="${post.title}" 
+                class="featured-image"
+                onerror="this.onerror=null; this.src='https://placehold.co/800x400/222222/DDDDDD?text=Image+Missing';"
+            />
         </div>
         <div class="featured-content">
-            <p class="featured-category">${categories}</p>
-            <a href="./post/post.html?id=${post.postid}" class="featured-title">${post.title}</a>
-            <p class="featured-excerpt">${post.content_preview}</p>
+            <span class="featured-category">${categories}</span>
+            <h1 class="featured-title">
+                <a href="./post/post.html?id=${post.postid}" title="${post.title}">
+                    ${post.title}
+                </a>
+            </h1>
+            <p class="featured-excerpt">${excerpt}</p>
             <div class="featured-meta">
-                <span class="author"><i class="fas fa-user"></i> ${post.author_name}</span>
-                <span class="date"><i class="fas fa-calendar-alt"></i> ${date}</span>
+                <span class="author">
+                    <i class="fas fa-user"></i> 
+                    ${post.author_name}
+                </span>
+                <span class="date">
+                    <i class="fas fa-calendar-alt"></i> 
+                    ${date}
+                </span>
             </div>
+            <a href="./post/post.html?id=${post.postid}" class="featured-btn">
+                <i class="fas fa-arrow-right"></i> Read Full Article
+            </a>
         </div>
     `;
 }
@@ -83,7 +104,7 @@ async function fetchPublicPosts() {
             renderFeaturedPost(featuredPost);
             renderPostCards(remainingPosts);
             
-            if (loadMoreButton) loadMoreButton.style.display = 'block';
+            if (loadMoreButton) loadMoreButton.style.display = 'inline-flex';
 
         } else {
             renderFeaturedPost(null);
@@ -100,10 +121,10 @@ async function fetchPublicPosts() {
         const loadingGridMessage = document.getElementById('grid-loading-status');
         if (loadingGridMessage) loadingGridMessage.remove();
         
-        postsContainer.innerHTML = 'Failed to load articles ...';
+        postsContainer.innerHTML = '<p class="text-center text-gray-500">Failed to load articles. Please try reloading the page.</p>';
         if (loadMoreButton) loadMoreButton.style.display = 'none';
         
-        showToast('Could not connect to the sever. Try reloading.', 'error');
+        showToast('Could not connect to the server. Try reloading.', 'error');
     }
 }
 
@@ -119,33 +140,43 @@ function createPostCard(post) {
         imageUrl = BASE_API_URL + post.main_image_url; 
     }
     
-    const categories = post.categories && post.categories.length > 0 ? post.categories.join(', ') : 'Uncategorized';
+    const categories = post.categories && post.categories.length > 0 
+        ? post.categories.join(', ') 
+        : 'Uncategorized';
     
     const date = new Date(post.created_at).toLocaleDateString('en-US', {
         year: 'numeric', month: 'short', day: 'numeric'
     });
 
+    const excerpt = post.content_preview || 'No preview available';
+
     card.innerHTML = `
-        <img src="${imageUrl}" alt="${post.title}" class="post-card-image" onerror="this.onerror=null; this.src='https://placehold.co/600x400/2A2A2A/DDDDDD?text=Image+Missing';"/>
+        <img 
+            src="${imageUrl}" 
+            alt="${post.title}" 
+            class="post-card-image" 
+            onerror="this.onerror=null; this.src='https://placehold.co/600x400/2A2A2A/DDDDDD?text=Image+Missing';"
+        />
         <div class="post-card-body">
-            <h3><a href="./post/post.html?id=${post.postid}" class="text-accent">${post.title}</a></h3>
-            <p>
-                ${post.content_preview}
-            </p>
-        <div class="post-card-meta">
-        <div class="author">
-            
-           <!-- // <i class="fas fa-user"></i> --> ${post.author_name}
-        </div>
-            <span class="date">
-            <i class="fas fa-calendar-alt"></i> 
-            ${date}</span>
-        <div class="category">
-            <i class="fas fa-tags"></i> 
-            ${categories}
-        </div>
-        </div>
+            <h3>
+                <a href="./post/post.html?id=${post.postid}" title="${post.title}">
+                    ${post.title}
+                </a>
+            </h3>
+            <p>${excerpt}</p>
+            <div class="post-card-meta">
+                <span class="author">${post.author_name}</span>
+                <span class="date">
+                    <i class="fas fa-calendar-alt"></i> 
+                    ${date}
+                </span>
+                <span class="category">
+                    <i class="fas fa-tag"></i> 
+                    ${categories}
+                </span>
+            </div>
         </div>
     `;
+    
     return card;
 }
