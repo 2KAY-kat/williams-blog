@@ -353,13 +353,20 @@ function closeModal() {
 async function handlePostSubmit(e) {
     e.preventDefault();
     const form = e.target;
-    const submitBtn = form.querySelector('button');
+    const submitBtn = form.querySelector('button[type="submit"]');
+    
+    if (!submitBtn) {
+        console.error('Submit button not found');
+        return;
+    }
+
     const btnText = submitBtn.querySelector('.btn-text');
     const spinner = submitBtn.querySelector('.btn-spinner');
 
     submitBtn.disabled = true;
-    btnText.textContent = 'Saving...';
-    spinner.style.display = 'inline-block';
+    
+    if (btnText) btnText.textContent = 'Saving...';
+    if (spinner) spinner.style.display = 'inline-block';
 
     try {
         const formData = new FormData();
@@ -376,12 +383,14 @@ async function handlePostSubmit(e) {
 
         // 3. Handle Image Upload or Existing URL
         const fileInput = document.getElementById('image-file-input');
-        const currentImageUrl = document.getElementById('current-image-url').value;
+        const currentImageUrl = document.getElementById('current-image-url');
+        
+        const imageUrl = currentImageUrl ? currentImageUrl.value : '';
 
-        if (fileInput.files.length > 0) {
+        if (fileInput && fileInput.files.length > 0) {
             formData.append('image_file', fileInput.files[0]);
-        } else if (currentImageUrl) {
-            formData.append('main_image_url', currentImageUrl);
+        } else if (imageUrl) {
+            formData.append('main_image_url', imageUrl);
         }
         
         const postId = form.postid.value;
@@ -408,15 +417,23 @@ async function handlePostSubmit(e) {
         }
 
         showToast(`Post ${postId ? 'updated' : 'created'} successfully!`, 'success');
-        closeModal();
+        
+        // Reset form
+        form.reset();
+        
+        // Navigate back to posts view
+        const navLinks = document.querySelectorAll('.nav-link');
+        switchView('posts', navLinks);
+        
+        // Reload posts
         loadPosts();
     } catch (err) {
         console.error('Error submitting post:', err);
         showToast(`Error: ${err.message}`, 'error');
     } finally {
         submitBtn.disabled = false;
-        btnText.textContent = 'Save Post';
-        spinner.style.display = 'none';
+        if (btnText) btnText.textContent = 'Save Post';
+        if (spinner) spinner.style.display = 'none';
     }
 }
 
