@@ -7,6 +7,8 @@ if (!token) {
 }
 
 let bloggerId = null;
+let currentEditingPost = null;
+
 try {
     const payload = JSON.parse(atob(token.split('.')[1]));
     bloggerId = payload.data.id;
@@ -80,7 +82,9 @@ function switchView(viewName, navLinks) {
     } else if (viewName === 'profile') {
         loadProfile();
     } else if (viewName === 'write') {
-        initializeWriteView(null);
+        // Use currentEditingPost if available, otherwise null for new post
+        initializeWriteView(currentEditingPost);
+        currentEditingPost = null; // Clear after use
     }
 }
 
@@ -449,7 +453,10 @@ async function editPost(postId) {
         }
         
         const post = await res.json();
-        initializeWriteView(post);
+        console.log('Editing post:', post);
+        
+        // Store the post globally before switching view
+        currentEditingPost = post;
         
         // Switch to write view
         const navLinks = document.querySelectorAll('.nav-link');
@@ -459,7 +466,6 @@ async function editPost(postId) {
         showToast(`Error: ${err.message}`, 'error');
     }
 }
-
 async function deletePost(postId) {
     if (!confirm('Are you sure you want to delete this post?')) return;
     
