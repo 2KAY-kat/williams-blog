@@ -1,7 +1,22 @@
 import { showToast } from './toast.js';
 import { BASE_API_URL } from './utils.js';
 
-document.addEventListener('DOMContentLoaded', fetchPublicPosts);
+const POSTS_PER_PAGE = 6;
+let currentOffset = 0;
+let hasMorePosts = true;
+let allLoadedPosts = [];
+
+document.addEventListener('DOMContentLoaded', () => {
+    fetchPublicPosts();
+    setupLoadMoreListener();
+});
+
+function setupLoadMoreListener() {
+    const loadMoreButton = document.getElementById('load-more-button');
+    if (loadMoreButton) {
+        loadMoreButton.addEventListener('click', loadMorePosts);
+    }
+}
 
 function renderFeaturedPost(post) {
     const container = document.getElementById('featured-story-container');
@@ -61,11 +76,14 @@ function renderFeaturedPost(post) {
     `;
 }
 
-function renderPostCards(posts) {
+function renderPostCards(posts, append = false) {
     const container = document.getElementById('posts-container');
-    container.innerHTML = '';
+    
+    if (!append) {
+        container.innerHTML = '';
+    }
 
-    if (posts.length === 0) {
+    if (posts.length === 0 && !append) {
         container.innerHTML = '<p class="text-center text-gray-500">No other articles published yet.</p>';
         return;
     }
@@ -81,7 +99,7 @@ async function fetchPublicPosts() {
     const loadingOverlay = document.getElementById('page-loading-overlay');
     
     try {
-        const response = await fetch(`${BASE_API_URL}/public/posts`);
+        const response = await fetch(`${BASE_API_URL}/public/posts?limit=${POSTS_PER_PAGE}&offset=0`);
         
         if (!response.ok) {
             throw new Error(`API returned status: ${response.status}`);
@@ -90,15 +108,21 @@ async function fetchPublicPosts() {
         const result = await response.json();
 
         if (result.success && result.data && result.data.length > 0) {
-            const allPosts = result.data;
-            const featuredPost = allPosts[0];
-            const remainingPosts = allPosts.slice(1);
+            allLoadedPosts = result.data;
+            const featuredPost = allLoadedPosts[0];
+            const remainingPosts = allLoadedPosts.slice(1);
 
             renderFeaturedPost(featuredPost);
             renderPostCards(remainingPosts);
             
-            if (loadMoreButton) loadMoreButton.style.display = 'inline-flex';
-
+            // Update pagination state
+            hasMorePosts = result.pagination.hasMore;
+            currentOffset = POSTS_PER_PAGE;
+            
+            // Show/hide load more button based on hasMore flag
+            if (loadMoreButton) {
+                loadMoreButton.style.display = hasMorePosts ? 'inline-flex' : 'none';
+            }
         } else {
             renderFeaturedPost(null);
             postsContainer.innerHTML = '<p class="text-center text-gray-500">No blog posts published yet. Check back soon!</p>';
@@ -113,9 +137,75 @@ async function fetchPublicPosts() {
         
         showToast('Could not connect to the server. Try reloading.', 'error');
     } finally {
-        // Hide loading overlay
         if (loadingOverlay) {
             loadingOverlay.classList.add('hidden');
+        }
+    }
+}
+
+async function loadMorePosts() {
+    const loadMoreButton = document.getElementById('load-more-button');
+    
+    if (!hasMorePosts) {
+        showToast('No more articles to load', 'info');
+        return;
+    }
+
+    // Disable button while loading
+    if (loadMoreButton) {
+        loadMoreButton.disabled = true;
+        loadMoreButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>  Loading...';
+    }
+
+    try {
+        const response = await fetch(
+            `${BASE_API_URL}/public/posts?limit=${POSTS_PER_PAGE}&offset=${currentOffset}`
+        );
+        
+        if (!response.ok) {
+            throw new Error(`API returned status: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        if (result.success && result.data && result.data.length > 0) {
+            // Append new posts to existing ones
+            allLoadedPosts = [...allLoadedPosts, ...result.data];
+            renderPostCards(result.data, true); // true = append mode
+            
+            // Update pagination state
+            hasMorePosts = result.pagination.hasMore;
+            currentOffset += result.data.length;
+            
+            // Update button visibility
+            if (loadMoreButton) {
+                if (hasMorePosts) {
+                    loadMoreButton.disabled = false;
+                    loadMoreButton.innerHTML = 'Load more';
+                    loadMoreButton.style.display = 'inline-flex';
+                } else {
+                    loadMoreButton.style.display = 'none';
+                    showToast('All articles have been loaded', 'success');
+                }
+            }
+        } else {
+            hasMorePosts = false;
+            if (loadMoreButton) {
+                loadMoreButton.style.display = 'none';
+                loadMoreButton.disabled = false;
+                loadMoreButton.innerHTML = 'Load more';
+            }
+            showToast('No more articles to load', 'info');
+        }
+
+    } catch (error) {
+        console.error('Error loading more posts:', error);
+        showToast('Failed to load more articles. Please try again.', 'error');
+        
+        // Re-enable button
+        if (loadMoreButton) {
+            loadMoreButton.disabled = false;
+            loadMoreButton.innerHTML = 'Load more';
         }
     }
 }
