@@ -160,21 +160,38 @@ async function loadPosts() {
             const postId = post.postid;
             const title = post.title || 'Untitled';
             const preview = post.content_preview || 'No preview available';
-            const createdDate = new Date(post.created_at).toLocaleDateString();
+            const createdDate = new Date(post.created_at).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
             const isPublished = post.ispublished === 1 || post.ispublished === true;
             
             card.innerHTML = `
-                <h3 class="posts-heading-prev">${title}</h3> 
-                <p class="posts-content-prev">${preview}</p>
-                <div class="details-meta">
-                  <small>${createdDate}</small>
-                  <span class="status ${isPublished ? 'published' : 'draft'}">
-                    ${isPublished ? 'Published' : 'Draft'}
-                  </span>
+                <div class="post-card-header">
+                    <h3 class="posts-heading-prev">${title}</h3>
                 </div>
-                <div class="actions">
-                    <button class="btn-edit" data-id="${postId}">Edit</button>
-                    <button class="btn-delete" data-id="${postId}">Delete</button>
+                <div class="post-card-body">
+                    <p class="posts-content-prev">${preview}</p>
+                </div>
+                <div class="post-card-footer">
+                    <div class="details-meta">
+                        <small><i class="fas fa-calendar-alt"></i> ${createdDate}</small>
+                        <span class="status ${isPublished ? 'published' : 'draft'}">
+                            <i class="fas"></i>
+                            ${isPublished ? 'Published' : 'Draft'}
+                        </span>
+                    </div>
+                    <div class="actions">
+                        <button class="btn-edit" data-id="${postId}" title="Edit post">
+                            <i class="fas fa-pen"></i>
+                            <span>Edit</span>
+                        </button>
+                        <button class="btn-delete" data-id="${postId}" title="Delete post">
+                            <i class="fas fa-trash-alt"></i>
+                            <span>Delete</span>
+                        </button>
+                    </div>
                 </div>
             `;
             list.appendChild(card);
