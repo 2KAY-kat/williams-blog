@@ -131,33 +131,184 @@
         .error-message i {
             color: #f56565;
         }
+
+        /* Post Skeleton Loader */
+        .post-skeleton {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .skeleton-header {
+            padding: 48px 48px 0 48px;
+            background: linear-gradient(90deg, #f8fafc 60%, #f1f5fa 100%);
+            border-bottom: 1px solid #e6eaf1;
+        }
+
+        .skeleton-category {
+            width: 120px;
+            height: 32px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 16px;
+            margin-bottom: 18px;
+        }
+
+        .skeleton-title-line {
+            width: 100%;
+            height: 40px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 6px;
+            margin-bottom: 12px;
+        }
+
+        .skeleton-title-line:last-of-type {
+            width: 85%;
+            margin-bottom: 18px;
+        }
+
+        .skeleton-meta {
+            display: flex;
+            gap: 28px;
+            margin-bottom: 0;
+        }
+
+        .skeleton-meta-item {
+            width: 180px;
+            height: 20px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 6px;
+        }
+
+        .skeleton-image {
+            width: 100%;
+            height: 420px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            margin: 0;
+            border-bottom: 1px solid #e6eaf1;
+        }
+
+        .skeleton-content {
+            padding: 40px 48px 0 48px;
+        }
+
+        .skeleton-paragraph {
+            margin-bottom: 1.7em;
+        }
+
+        .skeleton-line {
+            width: 100%;
+            height: 18px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .skeleton-line:last-child {
+            width: 95%;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
         @media (max-width: 900px) {
             .post-wrapper { max-width: 98vw; }
-            .post-header, #post-content { padding-left: 18px; padding-right: 18px; }
+            .post-header, #post-content, .skeleton-header, .skeleton-content { padding-left: 18px; padding-right: 18px; }
+            .skeleton-meta {
+                flex-wrap: wrap;
+            }
         }
         @media (max-width: 600px) {
-            .post-header, #post-content { padding: 16px 8px 0 8px; }
+            .post-header, #post-content, .skeleton-header, .skeleton-content { padding: 16px 8px 0 8px; }
             .post-title { font-size: 1.5rem; }
             .post-meta { flex-direction: column; align-items: flex-start; gap: 8px; }
+            
+            .skeleton-title-line {
+                height: 32px;
+            }
+
+            .skeleton-meta {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .skeleton-meta-item {
+                width: 150px;
+            }
+
+            .skeleton-image {
+                height: 300px;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Loading Overlay -->
+    <div id="page-loading-overlay" class="page-loading-overlay">
+        <div class="loading-container">
+            <div class="spinner"></div>
+            <p class="spinner-text">Loading article...</p>
+        </div>
+    </div>
+
     <header>
         <!-- Optionally, add a minimal nav or logo here -->
     </header>
     <main>
         <div class="post-wrapper">
-            <!-- Loading State -->
-            <div id="loading-state" class="state-message">
-                <i class="fas fa-spinner fa-spin"></i>
-                <p>Fetching article content...</p>
+            <!-- Skeleton Loading State -->
+            <div id="skeleton-state" class="post-skeleton">
+                <div class="skeleton-header">
+                    <div class="skeleton-category"></div>
+                    <div class="skeleton-title-line"></div>
+                    <div class="skeleton-title-line"></div>
+                    <div class="skeleton-meta">
+                        <div class="skeleton-meta-item"></div>
+                        <div class="skeleton-meta-item"></div>
+                    </div>
+                </div>
+                <div class="skeleton-image"></div>
+                <div class="skeleton-content">
+                    <div class="skeleton-paragraph">
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line"></div>
+                    </div>
+                    <div class="skeleton-paragraph">
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line"></div>
+                    </div>
+                    <div class="skeleton-paragraph">
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line"></div>
+                    </div>
+                </div>
             </div>
+
             <!-- Error State -->
             <div id="error-state" class="state-message error-message" style="display: none;">
                 <i class="fas fa-exclamation-triangle"></i>
                 <p id="error-message-text">Could not load the requested article.</p>
             </div>
+
             <!-- Post Content -->
             <article id="post-container" style="display: none;">
                 <!-- Post Header -->
@@ -177,94 +328,84 @@
                          onerror="this.onerror=null; this.src='https://placehold.co/800x400/cccccc/333333?text=Image+Not+Found';" />
                 </figure>
                 <!-- Article Body -->
-
                 <section id="post-content">
                     <!-- Post content (HTML) will be injected here -->
                 </section>
             </article>
         </div>
     </main>
+
     <footer class="main-footer">
-    <div class="container">
-        <!-- Brand Column -->
-        <div class="footer-column">
-            <a href="/" class="footer-logo">
-                Williams <span>Kaphika</span>
-            </a>
-            <p class="footer-description">
-                Explore growth mindset, personal development, and practical insights for a better life.
-            </p>
-            <div class="social-links">
-                <a href="https://twitter.com" title="Twitter" target="_blank">
-                    <i class="fab fa-twitter"></i>
+        <div class="container">
+            <!-- Brand Column -->
+            <div class="footer-column">
+                <a href="/" class="footer-logo">
+                    Williams <span>Kaphika</span>
                 </a>
-                <a href="https://linkedin.com" title="LinkedIn" target="_blank">
-                    <i class="fab fa-linkedin"></i>
-                </a>
-                <a href="https://facebook.com" title="Facebook" target="_blank">
-                    <i class="fab fa-facebook"></i>
-                </a>
-                <a href="https://instagram.com" title="Instagram" target="_blank">
-                    <i class="fab fa-instagram"></i>
-                </a>
+                <p class="footer-description">
+                    Explore growth mindset, personal development, and practical insights for a better life.
+                </p>
+                <div class="social-links">
+                    <a href="https://twitter.com" title="Twitter" target="_blank">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="https://linkedin.com" title="LinkedIn" target="_blank">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    <a href="https://facebook.com" title="Facebook" target="_blank">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="https://instagram.com" title="Instagram" target="_blank">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Categories Column -->
+            <div class="footer-column">
+                <h3>Categories</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-arrow-right"></i> Growth Mindset</a></li>
+                    <li><a href="#"><i class="fas fa-arrow-right"></i> Personal Development</a></li>
+                    <li><a href="#"><i class="fas fa-arrow-right"></i> Tips & Tricks</a></li>
+                    <li><a href="#"><i class="fas fa-arrow-right"></i> Inspiration</a></li>
+                </ul>
+            </div>
+
+            <!-- Newsletter Column -->
+            <div class="footer-column">
+                <h3>Newsletter</h3>
+                <p>Subscribe to get the latest articles delivered to your inbox.</p>
+                <form class="newsletter-form" id="newsletter-form">
+                    <input 
+                        type="email" 
+                        placeholder="Enter your email" 
+                        required
+                        aria-label="Email for newsletter"
+                    >
+                    <button type="submit">Subscribe</button>
+                </form>
             </div>
         </div>
 
-        <!-- Quick Links Column -->
-        <!-- <div class="footer-column">
-            <h3>Quick Links</h3>
-            <ul>
-                <li><a href="/"><i class="fas fa-arrow-right"></i> Home</a></li>
-                <li><a href="#posts"><i class="fas fa-arrow-right"></i> Articles</a></li>
-                <li><a href="/admin/dashboard.html"><i class="fas fa-arrow-right"></i> Dashboard</a></li>
-                <li><a href="#contact"><i class="fas fa-arrow-right"></i> Contact</a></li>
-            </ul>
-        </div> -->
+        <!-- Footer Divider -->
+        <div class="footer-divider"></div>
 
-        <!-- Categories Column -->
-        <div class="footer-column">
-            <h3>Categories</h3>
-            <ul>
-                <li><a href="#"><i class="fas fa-arrow-right"></i> Growth Mindset</a></li>
-                <li><a href="#"><i class="fas fa-arrow-right"></i> Personal Development</a></li>
-                <li><a href="#"><i class="fas fa-arrow-right"></i> Tips & Tricks</a></li>
-                <li><a href="#"><i class="fas fa-arrow-right"></i> Inspiration</a></li>
-            </ul>
+        <!-- Footer Bottom -->
+        <div class="container">
+            <div class="footer-bottom">
+                <p class="footer-bottom-text">
+                    &copy; 2024 Williams Blog. All rights reserved. | Crafted with <i class="fas fa-heart" style="color: var(--accent-common-color);"></i> by Williams
+                </p>
+                <ul class="footer-bottom-links">
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
         </div>
+    </footer>
 
-        <!-- Newsletter Column -->
-        <div class="footer-column">
-            <h3>Newsletter</h3>
-            <p>Subscribe to get the latest articles delivered to your inbox.</p>
-            <form class="newsletter-form" id="newsletter-form">
-                <input 
-                    type="email" 
-                    placeholder="Enter your email" 
-                    required
-                    aria-label="Email for newsletter"
-                >
-                <button type="submit">Subscribe</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Footer Divider -->
-    <div class="footer-divider"></div>
-
-    <!-- Footer Bottom -->
-    <div class="container">
-        <div class="footer-bottom">
-            <p class="footer-bottom-text">
-                &copy; 2024 Williams Blog. All rights reserved. | Crafted with <i class="fas fa-heart" style="color: var(--accent-common-color);"></i> by Williams
-            </p>
-            <ul class="footer-bottom-links">
-                <li><a href="#">Privacy Policy</a></li>
-                <li><a href="#">Terms of Service</a></li>
-                <li><a href="#">Contact Us</a></li>
-            </ul>
-        </div>
-    </div>
-</footer>
     <script type="module" src="../js/post.js"></script>
     <script type="module" src="../js/index.js"></script> 
 </body>

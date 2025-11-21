@@ -2,7 +2,8 @@ import { showToast } from './toast.js';
 import { BASE_API_URL } from './utils.js'; 
 
 document.addEventListener('DOMContentLoaded', async function() {
-    const loadingState = document.getElementById('loading-state');
+    const loadingOverlay = document.getElementById('page-loading-overlay');
+    const skeletonState = document.getElementById('skeleton-state');
     const errorState = document.getElementById('error-state');
     const postContainer = document.getElementById('post-container');
     const pageTitle = document.getElementById('page-title');
@@ -17,8 +18,12 @@ document.addEventListener('DOMContentLoaded', async function() {
     
     // Helper function to show error state
     const displayError = (message) => {
-        loadingState.style.display = 'none';
-        errorState.style.display = 'block';
+        // Hide skeleton and loading overlay
+        if (skeletonState) skeletonState.style.display = 'none';
+        if (loadingOverlay) loadingOverlay.classList.add('hidden');
+        
+        // Show error state
+        if (errorState) errorState.style.display = 'block';
         errorMessageText.textContent = message;
         showToast(message, 'error');
     }
@@ -37,16 +42,12 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     try {
         const response = await fetch(endpoint);
-        
-        // Hide loading state
-        loadingState.style.display = 'none';
 
         if (!response.ok) {
             // Attempt to read the error message from the API response
             const error = await response.json().catch(() => ({ 
                 message: 'Failed to parse error response.' 
-            })
-        );
+            }));
             displayError(`Post not found (Status ${response.status}). ${error.message || 'Check the console for details.'}`);
             return;
         }
@@ -65,7 +66,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         
         // Handle image: use placeholder if post.main_image_url is missing or invalid
         if (post.main_image_url) {
-            postImageEl.src = post.main_image_url;
+            postImageEl.src = BASE_API_URL + post.main_image_url;
         } else {
             postImageEl.src = `https://placehold.co/800x400/cccccc/333333?text=${encodeURIComponent(post.title || 'Article')}`;
         }
@@ -73,6 +74,11 @@ document.addEventListener('DOMContentLoaded', async function() {
         // Content: use post_content or content
         postContentEl.innerHTML = post.post_content || post.content || '<p>No content available for this post.</p>';
 
+        // Hide skeleton and loading overlay
+        if (skeletonState) skeletonState.style.display = 'none';
+        if (loadingOverlay) loadingOverlay.classList.add('hidden');
+        
+        // Show post container
         postContainer.style.display = 'block';
 
     } catch (error) {

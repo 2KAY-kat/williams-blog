@@ -5,9 +5,6 @@ document.addEventListener('DOMContentLoaded', fetchPublicPosts);
 
 function renderFeaturedPost(post) {
     const container = document.getElementById('featured-story-container');
-    const loadingMessage = document.getElementById('loading-featured');
-    
-    if (loadingMessage) loadingMessage.remove();
 
     if (!post) {
         container.innerHTML = '<p class="loading-featured">No featured story available.</p>';
@@ -81,8 +78,7 @@ function renderPostCards(posts) {
 async function fetchPublicPosts() {
     const postsContainer = document.getElementById('posts-container');
     const loadMoreButton = document.getElementById('load-more-button');
-    
-    postsContainer.innerHTML = '<p id="grid-loading-status">Loading latest articles...</p>';
+    const loadingOverlay = document.getElementById('page-loading-overlay');
     
     try {
         const response = await fetch(`${BASE_API_URL}/public/posts`);
@@ -92,9 +88,6 @@ async function fetchPublicPosts() {
         }
 
         const result = await response.json();
-        
-        const loadingGridMessage = document.getElementById('grid-loading-status');
-        if (loadingGridMessage) loadingGridMessage.remove();
 
         if (result.success && result.data && result.data.length > 0) {
             const allPosts = result.data;
@@ -115,16 +108,15 @@ async function fetchPublicPosts() {
     } catch (error) {
         console.error('Error fetching posts:', error);
         
-        const featuredLoading = document.getElementById('loading-featured');
-        if (featuredLoading) featuredLoading.textContent = 'Failed to load featured story';
-        
-        const loadingGridMessage = document.getElementById('grid-loading-status');
-        if (loadingGridMessage) loadingGridMessage.remove();
-        
         postsContainer.innerHTML = '<p class="text-center text-gray-500">Failed to load articles. Please try reloading the page.</p>';
         if (loadMoreButton) loadMoreButton.style.display = 'none';
         
         showToast('Could not connect to the server. Try reloading.', 'error');
+    } finally {
+        // Hide loading overlay
+        if (loadingOverlay) {
+            loadingOverlay.classList.add('hidden');
+        }
     }
 }
 

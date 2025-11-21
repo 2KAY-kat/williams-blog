@@ -10,6 +10,14 @@
 </head>
 
 <body>
+    <!-- Loading Overlay -->
+    <div id="page-loading-overlay" class="page-loading-overlay">
+        <div class="loading-container">
+            <div class="spinner"></div>
+            <p class="spinner-text">Loading your articles...</p>
+        </div>
+    </div>
+
     <header>
         
     </header>
@@ -17,9 +25,22 @@
     <main class="main-content">
         <section class="featured-story-section">
             <div class="container featured-story-container" id="featured-story-container">
-                <p class="loading-featured" id="loading-featured">
-                    Loading featured story...
-                </p>
+                <!-- Skeleton Loading for Featured Post -->
+                <div class="featured-skeleton">
+                    <div class="skeleton-image"></div>
+                    <div class="skeleton-content">
+                        <div class="skeleton skeleton-category"></div>
+                        <div class="skeleton skeleton-title"></div>
+                        <div class="skeleton skeleton-title"></div>
+                        <div class="skeleton skeleton-text"></div>
+                        <div class="skeleton skeleton-text"></div>
+                        <div class="skeleton-meta">
+                            <div class="skeleton skeleton-meta-item"></div>
+                            <div class="skeleton skeleton-meta-item"></div>
+                        </div>
+                        <div class="skeleton skeleton-button"></div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -27,9 +48,46 @@
             <div class="container">
                 <h2>Latest Articles</h2>
                 <div class="posts-grid" id="posts-container">
+                    <!-- Skeleton Loading for Post Cards -->
+                    <div class="post-card-skeleton">
+                        <div class="skeleton skeleton-image"></div>
+                        <div class="skeleton-body">
+                            <div class="skeleton skeleton-post-title"></div>
+                            <div class="skeleton skeleton-post-text"></div>
+                            <div class="skeleton skeleton-post-text"></div>
+                            <div class="skeleton-meta-group">
+                                <div class="skeleton skeleton-meta-item"></div>
+                                <div class="skeleton skeleton-meta-item"></div>
+                            </div>
+                        </div>
                     </div>
+                    <div class="post-card-skeleton">
+                        <div class="skeleton skeleton-image"></div>
+                        <div class="skeleton-body">
+                            <div class="skeleton skeleton-post-title"></div>
+                            <div class="skeleton skeleton-post-text"></div>
+                            <div class="skeleton skeleton-post-text"></div>
+                            <div class="skeleton-meta-group">
+                                <div class="skeleton skeleton-meta-item"></div>
+                                <div class="skeleton skeleton-meta-item"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="post-card-skeleton">
+                        <div class="skeleton skeleton-image"></div>
+                        <div class="skeleton-body">
+                            <div class="skeleton skeleton-post-title"></div>
+                            <div class="skeleton skeleton-post-text"></div>
+                            <div class="skeleton skeleton-post-text"></div>
+                            <div class="skeleton-meta-group">
+                                <div class="skeleton skeleton-meta-item"></div>
+                                <div class="skeleton skeleton-meta-item"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="load-parent">
-                    <div class="load-more cta-link" id="load-more-button">Load more</div>
+                    <div class="load-more cta-link" id="load-more-button" style="display: none;">Load more</div>
                 </div>
             </div>
         </section>
