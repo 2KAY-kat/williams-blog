@@ -9,6 +9,9 @@ if (!token) {
 let bloggerId = null;
 let currentEditingPost = null;
 
+let postToDelete = null;
+
+
 function showLoadingSpinner() {
     const spinner = document.getElementById('loading-spinner');
     if (spinner) {
@@ -194,6 +197,68 @@ document.addEventListener('DOMContentLoaded', () => {
     // Restore previous active view or default to home
     const savedView = getActiveView();
     switchView(savedView, navLinks);
+
+    // Delete modal handlers
+    const deleteModal = document.getElementById('delete-modal');
+    const deleteCancelBtn = document.getElementById('delete-cancel-btn');
+    const deleteConfirmBtn = document.getElementById('delete-confirm-btn');
+
+    if (deleteCancelBtn) {
+        deleteCancelBtn.addEventListener('click', hideDeleteModal);
+    }
+
+    if (deleteModal) {
+        deleteModal.addEventListener('click', (e) => {
+            if (e.target === deleteModal) {
+                hideDeleteModal();
+            }
+        });
+    }
+
+    if (deleteConfirmBtn) {
+        deleteConfirmBtn.addEventListener('click', async () => {
+            if (!postToDelete) return;
+
+            const originalHTML = deleteConfirmBtn.innerHTML;
+            deleteConfirmBtn.disabled = true;
+            deleteConfirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            try {
+                const res = await fetch(`${BASE_API_URL}/posts/${postToDelete}`, {
+                    method: 'DELETE',
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.error || 'Delete failed');
+                }
+
+                showToast('Post deleted successfully!', 'success');
+                hideDeleteModal();
+                loadPosts(); // Reload posts list
+            } catch (err) {
+                console.error('Error deleting post:', err);
+                showToast(`Error: ${err.message}`, 'error');
+            } finally {
+                deleteConfirmBtn.disabled = false;
+                deleteConfirmBtn.innerHTML = originalHTML;
+            }
+        });
+    }
+
+    // Event delegation for delete buttons (if using the previous setup)
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('.btn-delete')) {
+            e.preventDefault();
+            const postCard = e.target.closest('.post-card');
+            const postIdAttr = postCard?.dataset.postId;
+            
+            if (postIdAttr) {
+                deletePost(parseInt(postIdAttr));
+            }
+        }
+    });
 });
 
 function initializeWriteView(post = null) {
@@ -505,25 +570,45 @@ async function editPost(postId) {
 }
 
 async function deletePost(postId) {
-    if (!confirm('Are you sure you want to delete this post?')) return;
+    postToDelete = postId;
     
     try {
         const res = await fetch(`${BASE_API_URL}/posts/${postId}`, {
-            method: 'DELETE',
             headers: { Authorization: `Bearer ${token}` }
         });
         
-        if (!res.ok) {
-            const errorData = await res.json();
-            throw new Error(errorData.error || 'Failed to delete post');
-        }
+        if (!res.ok) throw new Error('Failed to fetch post');
         
-        showToast('Post deleted successfully.', 'success');
-        loadPosts();
+        const post = await res.json();
+        
+        // Populate modal with post info
+        document.getElementById('delete-post-title').textContent = post.title;
+        document.getElementById('delete-post-date').textContent = 
+            `Created on ${new Date(post.created_at).toLocaleDateString()}`;
+        
+        // Show modal
+        showDeleteModal();
     } catch (err) {
-        console.error('Error deleting post:', err);
-        showToast(`Error: ${err.message}`, 'error');
+        console.error('Error fetching post:', err);
+        showToast('Error loading post details', 'error');
     }
+}
+
+function showDeleteModal() {
+    const modal = document.getElementById('delete-modal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function hideDeleteModal() {
+    const modal = document.getElementById('delete-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
+    postToDelete = null;
 }
 
 async function loadProfile() {
