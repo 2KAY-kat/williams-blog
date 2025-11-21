@@ -9,6 +9,20 @@ if (!token) {
 let bloggerId = null;
 let currentEditingPost = null;
 
+function showLoadingSpinner() {
+    const spinner = document.getElementById('loading-spinner');
+    if (spinner) {
+        spinner.classList.remove('hidden');
+    }
+}
+
+function hideLoadingSpinner() {
+    const spinner = document.getElementById('loading-spinner');
+    if (spinner) {
+        spinner.classList.add('hidden');
+    }
+}
+
 try {
     const payload = JSON.parse(atob(token.split('.')[1]));
     bloggerId = payload.data.id;
@@ -89,12 +103,16 @@ function switchView(viewName, navLinks) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+ // Hide spinner after page loads
+    hideLoadingSpinner();
+    
     const navLinks = document.querySelectorAll('.nav-link');
     const postForm = document.getElementById('post-form');
     const addPostBtn = document.getElementById('add-post-btn');
     const logoutBtn = document.getElementById('logout-btn');
     const closeWriteBtn = document.getElementById('close-write-btn');
     const cancelPostBtn = document.getElementById('cancel-post-btn');
+
 
     // Navigation
     navLinks.forEach(link => {
@@ -124,6 +142,31 @@ document.addEventListener('DOMContentLoaded', () => {
     // Forms
     postForm.addEventListener('submit', handlePostSubmit);
 
+    // Event delegation for post actions (edit/delete)
+    document.addEventListener('click', (e) => {
+        // Handle edit button clicks
+        if (e.target.closest('.btn-edit')) {
+            e.preventDefault();
+            const postCard = e.target.closest('.post-card');
+            const postIdAttr = postCard?.dataset.postId;
+            
+            if (postIdAttr) {
+                editPost(parseInt(postIdAttr));
+            }
+        }
+        
+        // Handle delete button clicks
+        if (e.target.closest('.btn-delete')) {
+            e.preventDefault();
+            const postCard = e.target.closest('.post-card');
+            const postIdAttr = postCard?.dataset.postId;
+            
+            if (postIdAttr) {
+                deletePost(parseInt(postIdAttr));
+            }
+        }
+    });
+    
     // Logout
     logoutBtn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -200,8 +243,8 @@ function initializeWriteView(post = null) {
 }
 
 async function loadPosts() {
+    showLoadingSpinner();
     const list = document.getElementById('posts-container');
-    list.innerHTML = '<p style="padding: 2rem; text-align: center;">Loading posts...</p>';
     
     try {
         const res = await fetch(`${BASE_API_URL}/posts?blogger_id=${bloggerId}`, {
@@ -210,81 +253,60 @@ async function loadPosts() {
         
         if (!res.ok) {
             const errorData = await res.json();
-            throw new Error(errorData.error || `HTTP Error: ${res.status}`);
+            throw new Error(errorData.error || 'Failed to load posts');
         }
         
         const posts = await res.json();
         
         if (!Array.isArray(posts)) {
-            throw new Error('Invalid response format: expected array');
+            throw new Error('Invalid posts data');
         }
 
         // Clear loading message
         list.innerHTML = '';
         
         if (posts.length === 0) {
-            list.innerHTML = '<p style="padding: 2rem; text-align: center; grid-column: 1/-1;">No posts yet. Create your first post!</p>';
+            list.innerHTML = '<p style="padding: 2rem; text-align: center; grid-column: 1/-1;">No posts yet. <a href="#" onclick="document.getElementById(\'add-post-btn\').click(); return false;" style="color: var(--accent-color); text-decoration: none; font-weight: 600;">Create your first post</a></p>';
+            hideLoadingSpinner();
             return;
         }
-        
-        posts.forEach(post => {
-            const card = document.createElement('div');
-            card.className = 'post-card';
-            
-            const postId = post.postid;
-            const title = post.title || 'Untitled';
-            const preview = post.content_preview || 'No preview available';
-            const createdDate = new Date(post.created_at).toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'short', 
-                day: 'numeric' 
-            });
-            const isPublished = post.ispublished === 1 || post.ispublished === true;
-            
-            card.innerHTML = `
+
+        const postsHTML = posts.map(post => `
+            <div class="post-card" data-post-id="${post.postid}">
                 <div class="post-card-header">
-                    <h3 class="posts-heading-prev">${title}</h3>
+                    <h4 class="posts-heading-prev">${post.title}</h4>
                 </div>
                 <div class="post-card-body">
-                    <p class="posts-content-prev">${preview}</p>
+                    <p class="posts-content-prev">${post.content_preview || post.content}</p>
                 </div>
                 <div class="post-card-footer">
                     <div class="details-meta">
-                        <small><i class="fas fa-calendar-alt"></i> ${createdDate}</small>
-                        <span class="status ${isPublished ? 'published' : 'draft'}">
-                            <i class="fas"></i>
-                            ${isPublished ? 'Published' : 'Draft'}
+                        <small><i class="fas fa-calendar"></i> ${new Date(post.created_at).toLocaleDateString()}</small>
+                        <span class="status ${post.ispublished ? 'published' : 'draft'}">
+                            <i class="fas"></i> ${post.ispublished ? 'Published' : 'Draft'}
                         </span>
                     </div>
                     <div class="actions">
-                        <button class="btn-edit" data-id="${postId}" title="Edit post">
-                            <i class="fas fa-pen"></i>
-                            <span>Edit</span>
+                        <button class="btn-edit" type="button" title="Edit post">
+                            <i class="fas fa-edit"></i> Edit
                         </button>
-                        <button class="btn-delete" data-id="${postId}" title="Delete post">
-                            <i class="fas fa-trash-alt"></i>
-                            <span>Delete</span>
+                        <button class="btn-delete" type="button" title="Delete post">
+                            <i class="fas fa-trash"></i> Delete
                         </button>
                     </div>
                 </div>
-            `;
-            list.appendChild(card);
-        });
-
-        // Add event listeners to buttons
-        document.querySelectorAll('.btn-edit').forEach(btn => {
-            btn.addEventListener('click', () => editPost(btn.dataset.id));
-        });
-        document.querySelectorAll('.btn-delete').forEach(btn => {
-            btn.addEventListener('click', () => deletePost(btn.dataset.id));
-        });
+            </div>
+        `).join('');
         
-        console.log(`Successfully loaded ${posts.length} posts`);
+        list.innerHTML = postsHTML;
     } catch (err) {
         console.error('Error loading posts:', err);
-        list.innerHTML = `<p style="padding: 2rem; text-align: center; grid-column: 1/-1; color: #dc3545;">Error: ${err.message}</p>`;
+        list.innerHTML = `<p style="padding: 2rem; text-align: center; grid-column: 1/-1; color: #d32f2f;">Error loading posts: ${err.message}</p>`;
+    } finally {
+        hideLoadingSpinner();
     }
 }
+
 
 let allCategories = [];
 async function loadCategories() {
@@ -454,6 +476,7 @@ async function handlePostSubmit(e) {
 }
 
 async function editPost(postId) {
+    showLoadingSpinner();
     try {
         const res = await fetch(`${BASE_API_URL}/posts/${postId}`, {
             headers: { Authorization: `Bearer ${token}` }
@@ -476,8 +499,11 @@ async function editPost(postId) {
     } catch (err) {
         console.error('Error editing post:', err);
         showToast(`Error: ${err.message}`, 'error');
+    } finally {
+        hideLoadingSpinner();
     }
 }
+
 async function deletePost(postId) {
     if (!confirm('Are you sure you want to delete this post?')) return;
     
@@ -575,6 +601,7 @@ async function loadBloggerGreeting() {
     }
 }
 
+
 async function loadDashboardStats() {
     try {
         const res = await fetch(`${BASE_API_URL}/posts?blogger_id=${bloggerId}`, {
@@ -597,7 +624,7 @@ async function loadDashboardStats() {
         if (statsPostsEl) statsPostsEl.textContent = totalPosts;
         if (statsPublishedEl) statsPublishedEl.textContent = publishedPosts;
         
-        // Load subscriber count (if you have this endpoint)
+        // Load subscriber count
         loadSubscriberCount();
     } catch (err) {
         console.error('Error loading dashboard stats:', err);
@@ -619,6 +646,5 @@ async function loadSubscriberCount() {
         if (statsSubscribersEl) statsSubscribersEl.textContent = count;
     } catch (err) {
         console.log('Note: Subscriber endpoint may not be available yet');
-        showToast('Note: Subscriber endpoint may not be available yet', 'info');
     }
 }
