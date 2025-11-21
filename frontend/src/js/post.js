@@ -1,6 +1,14 @@
 import { showToast } from './toast.js'; 
 import { BASE_API_URL } from './utils.js'; 
 
+// Calculate reading time based on word count
+function calculateReadingTime(text) {
+    const wordsPerMinute = 200;
+    const wordCount = text.trim().split(/\s+/).length;
+    const readingTime = Math.ceil(wordCount / wordsPerMinute);
+    return readingTime;
+}
+
 document.addEventListener('DOMContentLoaded', async function() {
     const loadingOverlay = document.getElementById('page-loading-overlay');
     const skeletonState = document.getElementById('skeleton-state');
@@ -12,17 +20,16 @@ document.addEventListener('DOMContentLoaded', async function() {
     const postCategoryEl = document.getElementById('post-category');
     const postAuthorEl = document.getElementById('post-author');
     const postDateEl = document.getElementById('post-date');
+    const postReadingTimeEl = document.getElementById('post-reading-time');
     const postImageEl = document.getElementById('post-image');
     const postContentEl = document.getElementById('post-content');
     const errorMessageText = document.getElementById('error-message-text');
     
     // Helper function to show error state
     const displayError = (message) => {
-        // Hide skeleton and loading overlay
         if (skeletonState) skeletonState.style.display = 'none';
         if (loadingOverlay) loadingOverlay.classList.add('hidden');
         
-        // Show error state
         if (errorState) errorState.style.display = 'block';
         errorMessageText.textContent = message;
         showToast(message, 'error');
@@ -37,14 +44,12 @@ document.addEventListener('DOMContentLoaded', async function() {
         return;
     }
     
-    // API endpoint using the /api-v1 proxy prefix
     const endpoint = `${BASE_API_URL}/public/post/${postId}`;
 
     try {
         const response = await fetch(endpoint);
 
         if (!response.ok) {
-            // Attempt to read the error message from the API response
             const error = await response.json().catch(() => ({ 
                 message: 'Failed to parse error response.' 
             }));
@@ -53,26 +58,43 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
 
         const result = await response.json();
-        const post = result.data || result; // support both {data: post} and direct post
+        const post = result.data || result;
         
         pageTitle.textContent = `${post.title || 'Post'} | Williams Kaphika`;
         postTitleEl.textContent = post.title || 'Untitled Post';
-        // Show first category if available, else 'GENERAL'
+        
+        // Category
         postCategoryEl.textContent = Array.isArray(post.categories) && post.categories.length > 0
             ? post.categories[0].toUpperCase()
             : 'GENERAL';
-        postAuthorEl.innerHTML = `<i class="fas fa-user mr-2"></i> ${post.author_name || 'Anonymous Author'}`;
-        postDateEl.innerHTML = `<i class="fas fa-calendar-alt mr-2"></i> ${post.created_at ? new Date(post.created_at).toLocaleDateString() : 'N/A'}`;
         
-        // Handle image: use placeholder if post.main_image_url is missing or invalid
+        // Author
+        postAuthorEl.innerHTML = `<i class="fas fa-user"></i> ${post.author_name || 'Anonymous Author'}`;
+        
+        // Date
+        const formattedDate = post.created_at 
+            ? new Date(post.created_at).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              })
+            : 'N/A';
+        postDateEl.innerHTML = `<i class="fas fa-calendar-alt"></i> ${formattedDate}`;
+        
+        // Content - inject first to calculate reading time
+        const contentHtml = post.post_content || post.content || '<p>No content available for this post.</p>';
+        postContentEl.innerHTML = contentHtml;
+        
+        // Calculate and display reading time
+        const readingTime = calculateReadingTime(contentHtml);
+        postReadingTimeEl.innerHTML = `<i class="fas fa-clock"></i> ${readingTime} min read`;
+        
+        // Image
         if (post.main_image_url) {
             postImageEl.src = BASE_API_URL + post.main_image_url;
         } else {
             postImageEl.src = `https://placehold.co/800x400/cccccc/333333?text=${encodeURIComponent(post.title || 'Article')}`;
         }
-        
-        // Content: use post_content or content
-        postContentEl.innerHTML = post.post_content || post.content || '<p>No content available for this post.</p>';
 
         // Hide skeleton and loading overlay
         if (skeletonState) skeletonState.style.display = 'none';
