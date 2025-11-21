@@ -17,6 +17,7 @@
       <nav class="nav">
         <a href="#" class="nav-link" data-view="home" data-label="Home"><i class="fas fa-home"></i> <span>Home</span></a>
         <a href="#" class="nav-link" data-view="posts" data-label="Posts"><i class="fas fa-file-alt"></i> <span>Posts</span></a>
+        <a href="#" class="nav-link" data-view="write" data-label="Write"><i class="fas fa-pen-fancy"></i> <span>Write</span></a>
         <a href="#" class="nav-link" data-view="profile" data-label="Profile"><i class="fas fa-user"></i> <span>Profile</span></a>
         <a href="#" class="nav-link" data-view="subscribers" data-label="Subscribers"><i class="fas fa-bell"></i> <span>Subscribers</span></a>
         <a href="#" id="logout-btn" class="nav-link" data-label="Logout"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
@@ -39,7 +40,68 @@
         <section id="posts-view" class="view">
           <div class="posts-grid" id="posts-container">
           </div>
-        </section> 
+        </section>
+
+        <section id="write-view" class="view">
+          <div class="write-container">
+            <div class="write-header">
+              <div>
+                <h2 id="write-title">New Post</h2>
+                <p class="write-subtitle" id="write-subtitle">Share your thoughts with the world</p>
+              </div>
+              <button type="button" class="btn-close-write" id="close-write-btn" title="Close">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+
+            <form id="post-form" class="write-form">
+              <input type="hidden" name="postid" />
+              
+              <div class="write-main">
+                <div class="form-section">
+                  <input type="text" name="title" placeholder="Post Title" class="write-title-input" required />
+                  <textarea name="content" placeholder="Write your post content here..." class="write-content-input" required></textarea>
+                </div>
+
+                <div class="write-sidebar">
+                  <div class="form-section">
+                    <h3>Publish Settings</h3>
+                    <label class="checkbox-group">
+                      <input type="checkbox" name="ispublished" />
+                      <span>Publish immediately</span>
+                    </label>
+                  </div>
+
+                  <div class="form-section">
+                    <h3>Featured Image</h3>
+                    <div class="image-upload">
+                      <input type="hidden" name="main_image_url" id="current-image-url" />
+                      <input type="file" name="image_file" id="image-file-input" accept="image/*" />
+                      <label for="image-file-input" class="file-label">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span>Click to upload</span>
+                      </label>
+                      <p id="image-preview-text" class="image-preview-text"></p>
+                    </div>
+                  </div>
+
+                  <div class="form-section">
+                    <h3>Categories</h3>
+                    <div id="categories-checkboxes" class="categories-list"></div>
+                  </div>
+
+                  <div class="form-actions">
+                    <button type="button" class="btn-secondary" id="cancel-post-btn">Cancel</button>
+                    <button type="submit" class="btn-primary">
+                      <span class="btn-text">Save Post</span>
+                      <span class="btn-spinner" style="display: none;"><i class="fas fa-spinner fa-spin"></i></span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </section>
 
         <section id="profile-view" class="view">
           <div class="profile-card">
@@ -56,46 +118,9 @@
               <button type="submit" class="cta-link subscribe-btn">Update Profile</button>
             </form>
           </div>
-        </section>
-
+        </section> 
       </div>
     </main>
-  </div>
-
-  <!-- MODALS -->
-  <div id="post-modal" class="modal" style="display: none;">
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <h2 id="modal-title">Add Post</h2>
-      <form id="post-form">
-        <input type="hidden" name="postid" />
-        <div class="input-group">
-          <label>Title</label>
-          <input type="text" name="title" required />
-        </div>
-        <div class="input-group">
-          <label>Content</label>
-          <textarea name="content" rows="6" required></textarea>
-        </div>
-        <div class="input-group">
-          <label>Main Image</label>
-          <input type="hidden" name="main_image_url" id="current-image-url" /> 
-          <input type="file" name="image_file" id="image-file-input" accept="image/*" />
-          <p id="image-preview-text" style="margin-top: 5px; font-size: 0.85em; color: #555; display: none;"></p>
-        </div>
-        <div class="input-group">
-          <label>Categories</label>
-          <div id="categories-checkboxes"></div>
-        </div>
-        <div class="input-group checkbox">
-          <label><input type="checkbox" name="ispublished" /> Publish</label>
-        </div>
-        <button type="submit" class="cta-link subscribe-btn">
-          <span class="btn-text">Save Post</span>
-          <span class="btn-spinner" style="display: none;"><i class="fas fa-spinner fa-spin"></i></span>
-        </button>
-      </form>
-    </div>
   </div>
 
   <script type="module" src="../js/auth-check.js"></script>

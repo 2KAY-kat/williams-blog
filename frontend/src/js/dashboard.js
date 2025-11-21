@@ -64,7 +64,11 @@ function switchView(viewName, navLinks) {
     });
     
     // Update page title
-    const viewTitle = viewName === 'posts' ? 'My Posts' : viewName.charAt(0).toUpperCase() + viewName.slice(1);
+    let viewTitle = 'Home';
+    if (viewName === 'posts') viewTitle = 'My Posts';
+    else if (viewName === 'write') viewTitle = 'Write';
+    else if (viewName === 'profile') viewTitle = 'Profile';
+    else if (viewName === 'subscribers') viewTitle = 'Subscribers';
     document.getElementById('page-title').textContent = viewTitle;
     
     // Save state
@@ -75,17 +79,18 @@ function switchView(viewName, navLinks) {
         loadPosts();
     } else if (viewName === 'profile') {
         loadProfile();
+    } else if (viewName === 'write') {
+        initializeWriteView(null);
     }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    const views = document.querySelectorAll('.view');
     const navLinks = document.querySelectorAll('.nav-link');
-    const modal = document.getElementById('post-modal');
-    const closeBtn = document.querySelector('.close');
     const postForm = document.getElementById('post-form');
     const addPostBtn = document.getElementById('add-post-btn');
     const logoutBtn = document.getElementById('logout-btn');
+    const closeWriteBtn = document.getElementById('close-write-btn');
+    const cancelPostBtn = document.getElementById('cancel-post-btn');
 
     // Navigation
     navLinks.forEach(link => {
@@ -98,11 +103,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Modal
-    addPostBtn.addEventListener('click', () => openModal());
-    closeBtn.addEventListener('click', () => closeModal());
-    window.addEventListener('click', (e) => { 
-        if (e.target === modal) closeModal(); 
+    // Add Post Button
+    addPostBtn.addEventListener('click', () => {
+        switchView('write', navLinks);
+    });
+
+    // Close Write View
+    closeWriteBtn.addEventListener('click', () => {
+        switchView('posts', navLinks);
+    });
+
+    cancelPostBtn.addEventListener('click', () => {
+        switchView('posts', navLinks);
     });
 
     // Forms
@@ -112,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
     logoutBtn.addEventListener('click', (e) => {
         e.preventDefault();
         localStorage.removeItem('auth_token');
-        localStorage.removeItem(DASHBOARD_STATE_KEY); // Clear dashboard state on logout
+        localStorage.removeItem(DASHBOARD_STATE_KEY);
         showToast('Logged out successfully.', 'success');
         setTimeout(() => window.location.href = '../auth/signup.html', 1000);
     });
@@ -124,6 +136,52 @@ document.addEventListener('DOMContentLoaded', () => {
     const savedView = getActiveView();
     switchView(savedView, navLinks);
 });
+
+function initializeWriteView(post = null) {
+    const form = document.getElementById('post-form');
+    const writeTitle = document.getElementById('write-title');
+    const writeSubtitle = document.getElementById('write-subtitle');
+    
+    // Reset form
+    form.reset();
+    form.postid.value = '';
+    document.querySelector('.btn-text').textContent = 'Save Post';
+
+    if (post) {
+        writeTitle.textContent = 'Edit Post';
+        writeSubtitle.textContent = 'Update your post';
+        form.title.value = post.title || '';
+        form.content.value = post.content || '';
+        form.ispublished.checked = post.ispublished === 1 || post.ispublished === true;
+        form.postid.value = post.postid;
+
+        const imageUrl = post.main_image_url;
+        if (imageUrl) {
+            document.getElementById('current-image-url').value = imageUrl;
+            document.getElementById('image-preview-text').textContent = `Current: ${imageUrl.split('/').pop()}`;
+            document.getElementById('image-preview-text').style.display = 'block';
+        }
+    } else {
+        writeTitle.textContent = 'New Post';
+        writeSubtitle.textContent = 'Share your thoughts with the world';
+        document.getElementById('image-preview-text').style.display = 'none';
+    }
+
+    // Categories
+    const container = document.getElementById('categories-checkboxes');
+    const postCategoryNames = post?.categories || [];
+
+    container.innerHTML = allCategories.map(cat => {
+        const isChecked = postCategoryNames.includes(cat.name);
+        return `
+            <label>
+                <input type="checkbox" class="category-checkbox" name="categories" value="${cat.category_id}" 
+                ${isChecked ? 'checked' : ''}>
+                ${cat.name}
+            </label>
+        `;
+    }).join('');
+}
 
 async function loadPosts() {
     const list = document.getElementById('posts-container');
@@ -374,7 +432,11 @@ async function editPost(postId) {
         }
         
         const post = await res.json();
-        openModal(post);
+        initializeWriteView(post);
+        
+        // Switch to write view
+        const navLinks = document.querySelectorAll('.nav-link');
+        switchView('write', navLinks);
     } catch (err) {
         console.error('Error editing post:', err);
         showToast(`Error: ${err.message}`, 'error');
