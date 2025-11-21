@@ -539,47 +539,378 @@ async function loadProfile() {
         
         const user = await res.json();
         
-        const form = document.getElementById('profile-form');
-        form.full_name.value = user.full_name || '';
-        form.email.value = user.email || '';
+        // Update profile header
+        const displayName = document.getElementById('profile-display-name');
+        const displayEmail = document.getElementById('profile-display-email');
+        if (displayName) displayName.textContent = user.full_name || 'Blogger';
+        if (displayEmail) displayEmail.textContent = user.email || '';
         
-        // Remove any existing submit listeners to prevent duplicates
-        const newForm = form.cloneNode(true);
-        form.parentNode.replaceChild(newForm, form);
-        
-        // Add single submit listener
-        newForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
+        // Fill account form
+        const accountForm = document.getElementById('account-form');
+        if (accountForm) {
+            accountForm.full_name.value = user.full_name || '';
+            accountForm.email.value = user.email || '';
+            accountForm.username.value = user.username || '';
+            accountForm.phone.value = user.phone || '';
+            accountForm.bio.value = user.bio || '';
+            accountForm.website.value = user.website || '';
             
-            try {
-                const data = {
-                    full_name: newForm.full_name.value.trim(),
-                    email: newForm.email.value.trim()
-                };
-                
-                const updateRes = await fetch(`${BASE_API_URL}/blogger`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json', 
-                        Authorization: `Bearer ${token}`
-                    },
-                    body: JSON.stringify(data)
-                });
-                
-                if (!updateRes.ok) {
-                    const err = await updateRes.json();
-                    throw new Error(err.error || 'Update failed');
-                }
-                
-                showToast('Profile updated successfully!', 'success');
-            } catch (err) {
-                console.error('Error updating profile:', err);
-                showToast(`Error: ${err.message}`, 'error');
-            }
-        });
+            // Update char count
+            updateBioCharCount();
+        }
+
+        // Setup event listeners for account form
+        setupAccountFormListeners();
+        setupSecurityFormListeners();
+        setupPreferencesListeners();
+        setupTabListeners();
+        setupAvatarUpload();
+
     } catch (err) {
         console.error('Error loading profile:', err);
         showToast(`Error: ${err.message}`, 'error');
+    }
+}
+
+function setupTabListeners() {
+    const tabButtons = document.querySelectorAll('.profile-tab-btn');
+    const tabContents = document.querySelectorAll('.profile-tab-content');
+    
+    tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tabName = btn.dataset.tab;
+            
+            // Update active button
+            tabButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // Update active content
+            tabContents.forEach(content => content.classList.remove('active'));
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        });
+    });
+}
+
+function setupAccountFormListeners() {
+    const form = document.getElementById('account-form');
+    if (!form) return;
+
+    // Bio character counter
+    const bioInput = form.bio;
+    if (bioInput) {
+        bioInput.addEventListener('input', updateBioCharCount);
+    }
+
+    // Form submission
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+        
+        try {
+            const data = {
+                full_name: form.full_name.value.trim(),
+                email: form.email.value.trim(),
+                username: form.username.value.trim(),
+                phone: form.phone.value.trim() || null,
+                bio: form.bio.value.trim() || null,
+                website: form.website.value.trim() || null
+            };
+            
+            const updateRes = await fetch(`${BASE_API_URL}/blogger`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify(data)
+            });
+            
+            if (!updateRes.ok) {
+                const err = await updateRes.json();
+                throw new Error(err.error || 'Update failed');
+            }
+            
+            showToast('Profile updated successfully!', 'success');
+            loadProfile(); // Reload profile data
+        } catch (err) {
+            console.error('Error updating profile:', err);
+            showToast(`Error: ${err.message}`, 'error');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        }
+    });
+
+    // Reset button
+    const resetBtn = document.getElementById('reset-account-btn');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            loadProfile();
+        });
+    }
+}
+
+function setupSecurityFormListeners() {
+    const toggleBtn = document.getElementById('toggle-password-form');
+    const passwordForm = document.getElementById('password-form');
+    const cancelBtn = document.getElementById('cancel-password-btn');
+
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+            passwordForm.classList.toggle('hidden');
+            toggleBtn.textContent = passwordForm.classList.contains('hidden') 
+                ? 'Change Password' 
+                : 'Hide';
+        });
+    }
+
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', () => {
+            passwordForm.classList.add('hidden');
+            if (toggleBtn) toggleBtn.textContent = 'Change Password';
+            passwordForm.reset();
+        });
+    }
+
+    // Password visibility toggles
+    document.querySelectorAll('.password-toggle').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = btn.dataset.target;
+            const input = document.getElementById(targetId);
+            const isPassword = input.type === 'password';
+            
+            input.type = isPassword ? 'text' : 'password';
+            btn.innerHTML = isPassword 
+                ? '<i class="fas fa-eye-slash"></i>' 
+                : '<i class="fas fa-eye"></i>';
+        });
+    });
+
+    // Password strength indicator
+    const newPasswordInput = document.getElementById('new-password');
+    if (newPasswordInput) {
+        newPasswordInput.addEventListener('input', updatePasswordStrength);
+    }
+
+    // Password form submission
+    passwordForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const currentPassword = document.getElementById('current-password').value;
+        const newPassword = document.getElementById('new-password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+
+        if (newPassword !== confirmPassword) {
+            showToast('New passwords do not match', 'error');
+            return;
+        }
+
+        if (newPassword.length < 8) {
+            showToast('Password must be at least 8 characters', 'error');
+            return;
+        }
+
+        const submitBtn = passwordForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+
+        try {
+            const res = await fetch(`${BASE_API_URL}/blogger/change-password`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    current_password: currentPassword,
+                    new_password: newPassword
+                })
+            });
+
+            if (!res.ok) {
+                const err = await res.json();
+                throw new Error(err.error || 'Password update failed');
+            }
+
+            showToast('Password updated successfully!', 'success');
+            passwordForm.reset();
+            passwordForm.classList.add('hidden');
+            document.getElementById('toggle-password-form').textContent = 'Change Password';
+        } catch (err) {
+            console.error('Error updating password:', err);
+            showToast(`Error: ${err.message}`, 'error');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        }
+    });
+
+    // 2FA button
+    const enable2faBtn = document.getElementById('enable-2fa-btn');
+    if (enable2faBtn) {
+        enable2faBtn.addEventListener('click', () => {
+            showToast('Two-factor authentication is coming soon!', 'info');
+        });
+    }
+}
+
+function setupPreferencesListeners() {
+    const preferencesForm = document.getElementById('preferences-form');
+    if (!preferencesForm) return;
+
+    preferencesForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const preferences = {
+            notify_comments: document.getElementById('notify-comments').checked,
+            notify_subscribers: document.getElementById('notify-subscribers').checked,
+            notify_weekly: document.getElementById('notify-weekly').checked,
+            public_profile: document.getElementById('public-profile').checked,
+            show_email: document.getElementById('show-email').checked
+        };
+
+        const submitBtn = preferencesForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+        try {
+            const res = await fetch(`${BASE_API_URL}/blogger/preferences`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify(preferences)
+            });
+
+            if (!res.ok) {
+                throw new Error('Failed to update preferences');
+            }
+
+            showToast('Preferences saved successfully!', 'success');
+        } catch (err) {
+            console.error('Error updating preferences:', err);
+            showToast(`Error: ${err.message}`, 'error');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        }
+    });
+
+    // Delete account button
+    const deleteBtn = document.getElementById('delete-account-btn');
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', () => {
+            if (confirm('Are you absolutely sure? This action cannot be undone. All your posts and data will be permanently deleted.')) {
+                if (confirm('Type your email to confirm deletion: ' + localStorage.getItem('blogger_email'))) {
+                    deleteAccountPermanently();
+                }
+            }
+        });
+    }
+}
+
+function setupAvatarUpload() {
+    const uploadBtn = document.getElementById('avatar-upload-btn');
+    const fileInput = document.getElementById('avatar-file-input');
+    
+    if (uploadBtn) {
+        uploadBtn.addEventListener('click', () => fileInput.click());
+    }
+
+    if (fileInput) {
+        fileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('avatar', file);
+
+            try {
+                const res = await fetch(`${BASE_API_URL}/blogger/avatar`, {
+                    method: 'POST',
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                if (!res.ok) throw new Error('Failed to upload avatar');
+
+                const data = await res.json();
+                document.getElementById('profile-avatar-img').src = data.avatar_url;
+                showToast('Avatar updated successfully!', 'success');
+            } catch (err) {
+                console.error('Error uploading avatar:', err);
+                showToast('Failed to upload avatar', 'error');
+            }
+        });
+    }
+}
+
+function updateBioCharCount() {
+    const bioInput = document.getElementById('profile-bio');
+    const charCount = document.getElementById('bio-char-count');
+    if (bioInput && charCount) {
+        charCount.textContent = bioInput.value.length;
+    }
+}
+
+function updatePasswordStrength() {
+    const password = document.getElementById('new-password').value;
+    const indicator = document.getElementById('strength-indicator');
+    const text = document.getElementById('strength-text');
+
+    let strength = 'Weak';
+    let strengthClass = 'weak';
+
+    if (password.length >= 8) {
+        const hasUpper = /[A-Z]/.test(password);
+        const hasLower = /[a-z]/.test(password);
+        const hasNumber = /[0-9]/.test(password);
+        const hasSpecial = /[!@#$%^&*]/.test(password);
+
+        const score = [hasUpper, hasLower, hasNumber, hasSpecial].filter(Boolean).length;
+
+        if (score >= 3) {
+            strength = 'Strong';
+            strengthClass = 'strong';
+        } else if (score >= 2) {
+            strength = 'Medium';
+            strengthClass = 'medium';
+        }
+    }
+
+    indicator.className = `strength-indicator ${strengthClass}`;
+    text.textContent = `Password strength: ${strength}`;
+}
+
+async function deleteAccountPermanently() {
+    try {
+        const res = await fetch(`${BASE_API_URL}/blogger`, {
+            method: 'DELETE',
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        if (!res.ok) throw new Error('Failed to delete account');
+
+        showToast('Account deleted successfully', 'success');
+        setTimeout(() => {
+            localStorage.removeItem('auth_token');
+            window.location.href = '../auth/signup.html';
+        }, 1500);
+    } catch (err) {
+        console.error('Error deleting account:', err);
+        showToast('Failed to delete account', 'error');
     }
 }
 
