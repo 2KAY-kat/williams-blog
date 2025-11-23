@@ -326,7 +326,6 @@ async function loadPosts() {
         if (!Array.isArray(posts)) {
             throw new Error('Invalid posts data');
         }
-
         // Clear loading message
         list.innerHTML = '';
         
@@ -649,7 +648,7 @@ async function loadProfile() {
         setupSecurityFormListeners();
         setupPreferencesListeners();
         setupTabListeners();
-        setupAvatarUpload();
+        // setupAvatarUpload();
 
     } catch (err) {
         console.error('Error loading profile:', err);
@@ -806,7 +805,7 @@ function setupSecurityFormListeners() {
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
 
         try {
-            const res = await fetch(`${BASE_API_URL}/blogger/change-password`, {
+            const res = await fetch(`${BASE_API_URL}/admin/change-password`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -847,98 +846,110 @@ function setupSecurityFormListeners() {
 
 function setupPreferencesListeners() {
     const preferencesForm = document.getElementById('preferences-form');
-    if (!preferencesForm) return;
+    if (preferencesForm) {
+        preferencesForm.addEventListener('click', () => {
+            showToast('Preference settings comming soon!', 'info');
+        });
+    }
+   // if (!preferencesForm) return;
 
-    preferencesForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
+    // preferencesForm.addEventListener('submit', async (e) => {
+    //     e.preventDefault();
         
-        const preferences = {
-            notify_comments: document.getElementById('notify-comments').checked,
-            notify_subscribers: document.getElementById('notify-subscribers').checked,
-            notify_weekly: document.getElementById('notify-weekly').checked,
-            public_profile: document.getElementById('public-profile').checked,
-            show_email: document.getElementById('show-email').checked
-        };
+    //     const preferences = {
+    //         notify_comments: document.getElementById('notify-comments').checked,
+    //         notify_subscribers: document.getElementById('notify-subscribers').checked,
+    //         notify_weekly: document.getElementById('notify-weekly').checked,
+    //         public_profile: document.getElementById('public-profile').checked,
+    //         show_email: document.getElementById('show-email').checked
+    //     };
 
-        const submitBtn = preferencesForm.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+    //     const submitBtn = preferencesForm.querySelector('button[type="submit"]');
+    //     const originalText = submitBtn.innerHTML;
+    //     submitBtn.disabled = true;
+    //     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
 
-        try {
-            const res = await fetch(`${BASE_API_URL}/blogger/preferences`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify(preferences)
-            });
+    //     try {
+    //         const res = await fetch(`${BASE_API_URL}/blogger/preferences`, {
+    //             method: 'PUT',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //                 Authorization: `Bearer ${token}`
+    //             },
+    //             body: JSON.stringify(preferences)
+    //         });
 
-            if (!res.ok) {
-                throw new Error('Failed to update preferences');
-            }
+    //         if (!res.ok) {
+    //             throw new Error('Failed to update preferences');
+    //         }
 
-            showToast('Preferences saved successfully!', 'success');
-        } catch (err) {
-            console.error('Error updating preferences:', err);
-            showToast(`Error: ${err.message}`, 'error');
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalText;
-        }
-    });
+    //         showToast('Preferences saved successfully!', 'success');
+    //     } catch (err) {
+    //         console.error('Error updating preferences:', err);
+    //         showToast(`Error: ${err.message}`, 'error');
+    //     } finally {
+    //         submitBtn.disabled = false;
+    //         submitBtn.innerHTML = originalText;
+    //     }
+    // });
 
     // Delete account button
     const deleteBtn = document.getElementById('delete-account-btn');
     if (deleteBtn) {
         deleteBtn.addEventListener('click', () => {
-            if (confirm('Are you absolutely sure? This action cannot be undone. All your posts and data will be permanently deleted.')) {
-                if (confirm('Type your email to confirm deletion: ' + localStorage.getItem('blogger_email'))) {
-                    deleteAccountPermanently();
-                }
-            }
+
+            showToast('Account deletion is coming soon', 'info');
+
+            // if (confirm('Are you absolutely sure? This action cannot be undone. All your posts and data will be permanently deleted.')) {
+            //     if (confirm('Type your email to confirm deletion: ' + localStorage.getItem('blogger_email'))) {
+            //         deleteAccountPermanently();
+            //     }
+            // }
         });
     }
 }
 
-function setupAvatarUpload() {
-    const uploadBtn = document.getElementById('avatar-upload-btn');
-    const fileInput = document.getElementById('avatar-file-input');
+
+/**
+ * avatar upload id in place but am thinking of using gravatar like he does it on his wordpress powered blog
+ */
+// function setupAvatarUpload() {
+//     const uploadBtn = document.getElementById('avatar-upload-btn');
+//     const fileInput = document.getElementById('avatar-file-input');
     
-    if (uploadBtn) {
-        uploadBtn.addEventListener('click', () => fileInput.click());
-    }
+//     if (uploadBtn) {
+//         uploadBtn.addEventListener('click', () => fileInput.click());
+//     }
 
-    if (fileInput) {
-        fileInput.addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
+//     if (fileInput) {
+//         fileInput.addEventListener('change', async (e) => {
+//             const file = e.target.files[0];
+//             if (!file) return;
 
-            const formData = new FormData();
-            formData.append('avatar', file);
+//             const formData = new FormData();
+//             formData.append('avatar', file);
 
-            try {
-                const res = await fetch(`${BASE_API_URL}/blogger/avatar`, {
-                    method: 'POST',
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    },
-                    body: formData
-                });
+//             try {
+//                 const res = await fetch(`${BASE_API_URL}/blogger/avatar`, {
+//                     method: 'POST',
+//                     headers: {
+//                         Authorization: `Bearer ${token}`
+//                     },
+//                     body: formData
+//                 });
 
-                if (!res.ok) throw new Error('Failed to upload avatar');
+//                 if (!res.ok) throw new Error('Failed to upload avatar');
 
-                const data = await res.json();
-                document.getElementById('profile-avatar-img').src = data.avatar_url;
-                showToast('Avatar updated successfully!', 'success');
-            } catch (err) {
-                console.error('Error uploading avatar:', err);
-                showToast('Failed to upload avatar', 'error');
-            }
-        });
-    }
-}
+//                 const data = await res.json();
+//                 document.getElementById('profile-avatar-img').src = data.avatar_url;
+//                 showToast('Avatar updated successfully!', 'success');
+//             } catch (err) {
+//                 console.error('Error uploading avatar:', err);
+//                 showToast('Failed to upload avatar', 'error');
+//             }
+//         });
+//     }
+// }
 
 function updateBioCharCount() {
     const bioInput = document.getElementById('profile-bio');
@@ -977,27 +988,28 @@ function updatePasswordStrength() {
     text.textContent = `Password strength: ${strength}`;
 }
 
-async function deleteAccountPermanently() {
-    try {
-        const res = await fetch(`${BASE_API_URL}/blogger`, {
-            method: 'DELETE',
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+// async function deleteAccountPermanently() {
+    
+//     // try {
+//     //     const res = await fetch(`${BASE_API_URL}/blogger`, {
+//     //         method: 'DELETE',
+//     //         headers: {
+//     //             Authorization: `Bearer ${token}`
+//     //         }
+//     //     });
 
-        if (!res.ok) throw new Error('Failed to delete account');
+//     //     if (!res.ok) throw new Error('Failed to delete account');
 
-        showToast('Account deleted successfully', 'success');
-        setTimeout(() => {
-            localStorage.removeItem('auth_token');
-            window.location.href = '../auth/signup.html';
-        }, 1500);
-    } catch (err) {
-        console.error('Error deleting account:', err);
-        showToast('Failed to delete account', 'error');
-    }
-}
+//     //     showToast('Account deleted successfully', 'success');
+//     //     setTimeout(() => {
+//     //         localStorage.removeItem('auth_token');
+//     //         window.location.href = '../auth/signup.html';
+//     //     }, 1500);
+//     // } catch (err) {
+//     //     console.error('Error deleting account:', err);
+//     //     showToast('Failed to delete account', 'error');
+//     // }
+// }
 
 async function loadBloggerGreeting() {
     try {
@@ -1064,3 +1076,19 @@ async function loadSubscriberCount() {
         console.log('Note: Subscriber endpoint may not be available yet');
     }
 }
+
+
+
+// Plan: Implement Load More Pagination Feature
+// Implement pagination with limit/offset on the backend to support loading 6 posts at a time, with metadata for frontend load more functionality.
+
+// Steps
+// Modify findPublishedPosts() in PostRepository.php to accept $limit and $offset parameters and add LIMIT/OFFSET to SQL query.
+// Add pagination metadata calculation (total posts count, hasMore flag, page info) in the repository method.
+// Update publicIndex() in PostController.php to extract query parameters and pass to repository.
+// Return response with posts array and pagination metadata to frontend.
+// Test endpoints using REST client with limit=6 parameter and different offset values.
+// Further Considerations
+// Default limit value: Should default to 6 posts per fetch? Yes / No / Configurable constant?
+// Maximum limit: Should there be a max limit (e.g., 50) to prevent abusive requests?
+// Response format: Include hasMore flag for easier frontend logic vs. including totalPages for better UX?
