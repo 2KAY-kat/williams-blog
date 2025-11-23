@@ -330,7 +330,20 @@ async function loadPosts() {
         list.innerHTML = '';
         
         if (posts.length === 0) {
-            list.innerHTML = '<p style="padding: 2rem; text-align: center; grid-column: 1/-1;">No posts yet. <a href="#" onclick="document.getElementById(\'add-post-btn\').click(); return false;" style="color: var(--accent-color); text-decoration: none; font-weight: 600;">Create your first post</a></p>';
+            list.innerHTML = `
+            <a href="#" class="addpost-card" onclick="document.getElementById(\'add-post-btn\').click(); return false;"> <div class="onboarding-card">
+                <div class="card-icon write-icon">
+                  <i class="fas fa-pen-fancy"></i>
+                </div>
+                <h3>Create Your First Post</h3>
+                <!-- <p>Share your thoughts, ideas, and expertise with your audience</p>
+                <button class="onboarding-btn" data-action="write">
+                  Start Writing
+                  <i class="fas fa-arrow-right"></i>
+                </button> -->
+              </div>
+              </a>`;
+            // '<p style="padding: 32px; text-align: center; grid-column: 1/-1;">No posts yet. <a href="#" onclick="document.getElementById(\'add-post-btn\').click(); return false;" style="color: var(--accent-color); text-decoration: none; font-weight: 600;">Create your first post</a></p>';
             hideLoadingSpinner();
             return;
         }
@@ -365,7 +378,7 @@ async function loadPosts() {
         list.innerHTML = postsHTML;
     } catch (err) {
         console.error('Error loading posts:', err);
-        list.innerHTML = `<p style="padding: 2rem; text-align: center; grid-column: 1/-1; color: #d32f2f;">Error loading posts: ${err.message}</p>`;
+        list.innerHTML = `<p style="padding: 32px; text-align: center; grid-column: 1/-1; color: #d32f2f;">Error loading posts: ${err.message}</p>`;
     } finally {
         hideLoadingSpinner();
     }
@@ -1076,19 +1089,3 @@ async function loadSubscriberCount() {
         console.log('Note: Subscriber endpoint may not be available yet');
     }
 }
-
-
-
-// Plan: Implement Load More Pagination Feature
-// Implement pagination with limit/offset on the backend to support loading 6 posts at a time, with metadata for frontend load more functionality.
-
-// Steps
-// Modify findPublishedPosts() in PostRepository.php to accept $limit and $offset parameters and add LIMIT/OFFSET to SQL query.
-// Add pagination metadata calculation (total posts count, hasMore flag, page info) in the repository method.
-// Update publicIndex() in PostController.php to extract query parameters and pass to repository.
-// Return response with posts array and pagination metadata to frontend.
-// Test endpoints using REST client with limit=6 parameter and different offset values.
-// Further Considerations
-// Default limit value: Should default to 6 posts per fetch? Yes / No / Configurable constant?
-// Maximum limit: Should there be a max limit (e.g., 50) to prevent abusive requests?
-// Response format: Include hasMore flag for easier frontend logic vs. including totalPages for better UX?
