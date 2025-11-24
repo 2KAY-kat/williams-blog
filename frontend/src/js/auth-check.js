@@ -5,7 +5,7 @@ const signupPageUrl = '/auth/signup';
 
 document.addEventListener('DOMContentLoaded', function() { 
     const addArticleLink = document.getElementById('add-article-link');
-    const addArticlePageUrl = '/admin/dashboard';
+    const addArticlePageUrl = '/admin/dashboard.html';
 
     if (!addArticleLink) return;
 
