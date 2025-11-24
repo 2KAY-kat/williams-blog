@@ -13,7 +13,7 @@ export default defineConfig({
         // Define entry points for multi-page application
         rollupOptions: {
             input: {
-                main: resolve(__dirname, "src/index.ejs"),
+                main: resolve(__dirname, "src/index.html"),
                 signup: resolve(__dirname, "src/auth/signup.html"),
                 dashboard: resolve(__dirname, "src/admin/dashboard.html"),
                 post: resolve(__dirname, "src/post/post.html"),

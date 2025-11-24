@@ -1,11 +1,11 @@
 import { showToast } from './toast.js';
 // import { BASE_API_URL } from './utils.js';
 
-const signupPageUrl = '/auth/signup';
+const signupPageUrl = '/auth/signup.html';
 
 document.addEventListener('DOMContentLoaded', function() { 
     const addArticleLink = document.getElementById('add-article-link');
-    const addArticlePageUrl = '/admin/dashboard';
+    const addArticlePageUrl = '/admin/dashboard.html';
 
     if (!addArticleLink) return;
 

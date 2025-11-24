@@ -1,6 +1,4 @@
-export function headerComponentHTML() {
-    
-    return `
+function a(){return`
         <div class="main-header">
             <a href="/" class="logo"><span>Williams</span> Kaphika</a>
             <a href="/" class="logo-mobile logo"><span>W</span>K</a>
@@ -10,6 +8,4 @@ export function headerComponentHTML() {
                 <a href="#" class="cta-link subscribe-btn">Subscribe</a>
             </nav>
         </div>
-        `;
-}
-
+        `}document.querySelector("header").innerHTML=a();
