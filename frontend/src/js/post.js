@@ -94,6 +94,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             postImageEl.src = BASE_API_URL + post.main_image_url;
         } else {
             postImageEl.src = `https://placehold.co/800x400/cccccc/333333?text=${encodeURIComponent(post.title || 'Article')}`;
+            //postImageEl.style.display = 'none'; //src = `https://placehold.co/800x400/cccccc/333333?text=${encodeURIComponent(post.title || 'Article')}`;
         }
 
         // Hide skeleton and loading overlay
