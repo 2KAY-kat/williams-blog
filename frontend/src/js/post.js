@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (post.main_image_url) {
             postImageEl.src = BASE_API_URL + post.main_image_url;
         } else {
-            postImageEl.src = `${BASE_API_URL}uploadsplaceholder.png`;
+            postImageEl.src = `${BASE_API_URL}/uploads/placeholder.png`;
             //postImageEl.style.display = 'none'; //src = `https://placehold.co/800x400/cccccc/333333?text=${encodeURIComponent(post.title || 'Article')}`;
         }
 

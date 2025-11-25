@@ -1,6 +1,8 @@
 import { showToast } from './toast.js';
 import { BASE_API_URL } from './utils.js';
 
+import tinymce from 'tinymce/tinymce';  
+
 const token = localStorage.getItem('auth_token');
 if (!token) {
     window.location.href = '../auth/signup.html';
@@ -26,6 +28,49 @@ function hideLoadingSpinner() {
     }
 }
 
+// starts here 
+// Initialize TinyMCE editor for the write textarea
+// Initialize editor
+export function initializeTinyMCE() {
+  if (tinymce.get("post-content-editor")) {
+    tinymce.get("post-content-editor").remove();
+  }
+
+  tinymce.init({
+    selector: "#post-content-editor",
+    plugins: [
+      "advlist", "autolink", "lists", "link", "image", "charmap", "preview",
+      "anchor", "searchreplace", "visualblocks", "code", "fullscreen",
+      "insertdatetime", "media", "table", "help", "wordcount"
+    ],
+    toolbar:
+      "undo redo | formatselect | bold italic underline | " +
+      "alignleft aligncenter alignright | bullist numlist outdent indent | " +
+      "link image media | code | removeformat | help",
+    menubar: false,
+    height: 420,
+    branding: false,
+    content_style: `
+      body { font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; line-height: 1.8; }
+      h2 { font-size: 1.4rem; }
+    `
+  });
+}
+// catch (err) {
+    //    console.warn('TinyMCE init error:', err);
+   // }
+
+function destroyTinyMCE() {
+    try {
+        if (tinymce.get && tinymce.get('post-content-editor')) {
+            tinymce.get('post-content-editor').remove();
+        }
+    } catch (err) {
+        console.warn('TinyMCE destroy error:', err);
+    }
+}
+
+//ends here 
 try {
     const payload = JSON.parse(atob(token.split('.')[1]));
     bloggerId = payload.data.id;
@@ -305,6 +350,15 @@ function initializeWriteView(post = null) {
             </label>
         `;
     }).join('');
+
+    // Initialize TinyMCE editor for write view and set content if editing
+    // Use a small timeout to give DOM a moment; tinymce.init will handle however necessary
+    setTimeout(() => {
+        initializeTinyMCE();
+        if (post && tinymce.get && tinymce.get('post-content-editor')) {
+            tinymce.get('post-content-editor').setContent(post.content || '');
+        }
+    }, 50);
 }
 
 async function loadPosts() {
@@ -469,7 +523,7 @@ async function handlePostSubmit(e) {
     e.preventDefault();
     const form = e.target;
     const submitBtn = form.querySelector('button[type="submit"]');
-    
+
     if (!submitBtn) {
         console.error('Submit button not found');
         return;
@@ -478,19 +532,43 @@ async function handlePostSubmit(e) {
     const btnText = submitBtn.querySelector('.btn-text');
     const spinner = submitBtn.querySelector('.btn-spinner');
 
+    // Set busy state
     submitBtn.disabled = true;
-    
     if (btnText) btnText.textContent = 'Saving...';
     if (spinner) spinner.style.display = 'inline-block';
 
     try {
+        // Get content from TinyMCE if available, otherwise from the textarea
+        let contentValue = '';
+        try {
+            if (window.tinymce && tinymce.get && tinymce.get('post-content-editor')) {
+                contentValue = tinymce.get('post-content-editor').getContent();
+            } else {
+                contentValue = form.content.value || '';
+            }
+        } catch (err) {
+            // Fallback to textarea
+            contentValue = form.content.value || '';
+        }
+
+        // Validate content: remove HTML tags and whitespace to ensure there is actual text
+        const plain = contentValue.replace(/<[^>]+>/g, '').replace(/&nbsp;|\u00A0/g, ' ').replace(/\s+/g, ' ').trim();
+        if (!plain) {
+            showToast('Post content cannot be empty.', 'error');
+            // Restore button state and abort
+            submitBtn.disabled = false;
+            if (btnText) btnText.textContent = 'Save Post';
+            if (spinner) spinner.style.display = 'none';
+            return;
+        }
+
         const formData = new FormData();
 
         // 1. Gather text and checkbox data
         formData.append('title', form.title.value.trim());
-        formData.append('content', form.content.value.trim());
+        formData.append('content', contentValue);
         formData.append('is_published', form.ispublished.checked ? 1 : 0);
-        
+
         // 2. Add categories (as IDs)
         const selectedCategories = Array.from(form.querySelectorAll('input[name="categories"]:checked'))
             .map(cb => parseInt(cb.value));
@@ -499,7 +577,6 @@ async function handlePostSubmit(e) {
         // 3. Handle Image Upload or Existing URL
         const fileInput = document.getElementById('image-file-input');
         const currentImageUrl = document.getElementById('current-image-url');
-        
         const imageUrl = currentImageUrl ? currentImageUrl.value : '';
 
         if (fileInput && fileInput.files.length > 0) {
@@ -507,11 +584,9 @@ async function handlePostSubmit(e) {
         } else if (imageUrl) {
             formData.append('main_image_url', imageUrl);
         }
-        
+
         const postId = form.postid.value;
-        const url = postId 
-            ? `${BASE_API_URL}/posts/${postId}` 
-            : `${BASE_API_URL}/posts`;
+        const url = postId ? `${BASE_API_URL}/posts/${postId}` : `${BASE_API_URL}/posts`;
 
         if (postId) {
             formData.append('_method', 'PUT');
@@ -526,26 +601,22 @@ async function handlePostSubmit(e) {
         });
 
         const result = await res.json();
-        
         if (!res.ok) {
             throw new Error(result.error || 'Failed to save post');
         }
 
         showToast(`Post ${postId ? 'updated' : 'created'} successfully!`, 'success');
-        
-        // Reset form
+
+        // Reset form and return to posts
         form.reset();
-        
-        // Navigate back to posts view
         const navLinks = document.querySelectorAll('.nav-link');
         switchView('posts', navLinks);
-        
-        // Reload posts
         loadPosts();
     } catch (err) {
         console.error('Error submitting post:', err);
         showToast(`Error: ${err.message}`, 'error');
     } finally {
+        // Always restore the submit button state
         submitBtn.disabled = false;
         if (btnText) btnText.textContent = 'Save Post';
         if (spinner) spinner.style.display = 'none';
