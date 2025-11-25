@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
     
     function toggleAuthMode() {
         if (isSigningUp) {
-            formSubtitle.textContent = "Welcome back, Williams!";
+            formSubtitle.textContent = "Welcome back, to The GrowthMinds Blog";
             btnText.textContent = "Sign in";
             authToggleLink.textContent = "Signup";
             togglePrompt.textContent = "Don't have an account?";
@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
             document.querySelector('[name="name"]')?.removeAttribute("required");
             document.getElementById("confirm-password")?.removeAttribute("required");
         } else {
-            formSubtitle.textContent = "Sign up to your blog Williams";
+            formSubtitle.textContent = "Sign up to The GrowthMinds Blog";
             btnText.textContent = "Sign up";
             authToggleLink.textContent = "Signin";
             togglePrompt.textContent = "Already have an account?";

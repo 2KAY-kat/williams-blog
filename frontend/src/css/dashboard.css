@@ -18,6 +18,9 @@ body { font-family: 'Segoe UI', sans-serif; background: #f4f6f9; }
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
+.state-message a {
+	color: var(--text-color);
+}
 .state-message i {
     font-size: 3.5rem;
     margin-bottom: 20px;

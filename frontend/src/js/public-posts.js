@@ -52,7 +52,7 @@ function renderFeaturedPost(post) {
             />
         </div>
         <div class="featured-content">
-            <span class="featured-category">${categories}</span>
+            <span class="featured-category"><i class="fas fa-tag"></i>${categories}</span>
             <h1 class="featured-title">
                 <a href="./post/post.html?id=${post.postid}" title="${post.title}">
                     ${post.title}

@@ -22,7 +22,7 @@ body {
 
 /* Auth Card */
 .login-box {
-    background: var(--border-color); 
+    background: var(--accent-color); 
     padding: 2rem;
     border-radius: 10px;
     box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
@@ -37,7 +37,7 @@ body {
 }
 
 .subtitle {
-    color: var(--medium-color); 
+    color: white; 
     text-align: center;
     margin-bottom: 2rem;
     font-size: 1.1rem;
@@ -45,21 +45,6 @@ body {
     line-height: 1.5;
 }
 
-.subtitle.reset{
-    font-size: 13px;
-    text-align: left;
-    margin-bottom: 1rem;
-    font-weight: 500;
-    color: var(--border-color);
-    filter: brightness(1);
-    opacity: 0.9; 
-    padding: 6px;
-    border-radius: 4px;
-}
-
-.reset-click {
-    color: var(--success-color);
-}
 
 /* Input Styles */
 .input-group {
@@ -87,12 +72,12 @@ body {
     left: 10px;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--border-color);
+    color: var(--accent-color);
 }
 
 
 .toggle-password:hover {
-    color: var(--accent-color);
+    color: var(--random-color);
 }
 
 i.toggle-password {
@@ -131,7 +116,7 @@ i.toggle-password {
 .login-btn {
     width: 100%;
     padding: 12px;
-    background: var(--medium-color);
+    background: var(--border-color);
     color: var(--accent-color);
     border: none;
     border-radius: var(--btn-border-radius);
@@ -168,8 +153,8 @@ i.toggle-password {
 }
 
 .login-btn:hover {
-    background: var(--text-color-dark);
-    color: var(--medium-color);
+    background: var(--text-mix-color);
+    color: var(--random-color);
 }
 
 .google-login {
@@ -179,12 +164,12 @@ i.toggle-password {
 
 .register-text {
     text-align: center;
-    color: var(--medium-color); 
+    color: var(--border-color); 
     margin-bottom: 15px;
 }
 
 .register-text a {
-    color: var(--accent-color);
+    color: white;
     text-decoration: none;
     transition: color 0.2s;
 }
