@@ -1,7 +1,7 @@
 import { showToast } from './toast.js';
 import { BASE_API_URL } from './utils.js';
 
-const POSTS_PER_PAGE = 6;
+const POSTS_PER_PAGE = 7;
 let currentOffset = 0;
 let hasMorePosts = true;
 let allLoadedPosts = [];
@@ -26,7 +26,7 @@ function renderFeaturedPost(post) {
         return;
     }
 
-    let imageUrl = 'https://placehold.co/800x400/222222/DDDDDD?text=Featured+Story';
+    let imageUrl = `${BASE_API_URL}/uploads/placeholder.png`;
     
     if (post.main_image_url) {
         imageUrl = BASE_API_URL + post.main_image_url; 
@@ -48,7 +48,7 @@ function renderFeaturedPost(post) {
                 src="${imageUrl}" 
                 alt="${post.title}" 
                 class="featured-image"
-                onerror="this.onerror=null; this.src='https://placehold.co/800x400/222222/DDDDDD?text=Image+Missing';"
+                onerror="this.onerror=null; this.src='${BASE_API_URL}/uploads/placeholder.png';"
             />
         </div>
         <div class="featured-content">
@@ -214,7 +214,7 @@ function createPostCard(post) {
     const card = document.createElement('div');
     card.className = 'post-card';
     
-    let imageUrl = 'https://placehold.co/600x400/2A2A2A/DDDDDD?text=No+Image';
+    let imageUrl = `${BASE_API_URL}/uploads/placeholder.png`;
 
     if (post.thumbnail_url) {
         imageUrl = BASE_API_URL + post.thumbnail_url;
@@ -237,7 +237,7 @@ function createPostCard(post) {
             src="${imageUrl}" 
             alt="${post.title}" 
             class="post-card-image" 
-            onerror="this.onerror=null; this.src='https://placehold.co/600x400/2A2A2A/DDDDDD?text=Image+Missing';"
+            onerror="this.onerror=null; this.src='${BASE_API_URL}/uploads/placeholder.png'"  
         />
         <div class="post-card-body">
             <h3>
