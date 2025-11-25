@@ -1,7 +1,7 @@
 import { showToast } from './toast.js';
 import { BASE_API_URL } from './utils.js';
 
-import tinymce from 'tinymce/tinymce';  
+// import tinymce from 'tinymce/tinymce';  
 
 const token = localStorage.getItem('auth_token');
 if (!token) {
@@ -31,45 +31,59 @@ function hideLoadingSpinner() {
 // starts here 
 // Initialize TinyMCE editor for the write textarea
 // Initialize editor
+/**
 export function initializeTinyMCE() {
-  if (tinymce.get("post-content-editor")) {
-    tinymce.get("post-content-editor").remove();
-  }
+  return new Promise((resolve, reject) => {
+    try {
+      // Destroy existing instance
+      if (tinymce.get("post-content-editor")) {
+        tinymce.get("post-content-editor").remove();
+      }
 
-  tinymce.init({
-    selector: "#post-content-editor",
-    plugins: [
-      "advlist", "autolink", "lists", "link", "image", "charmap", "preview",
-      "anchor", "searchreplace", "visualblocks", "code", "fullscreen",
-      "insertdatetime", "media", "table", "help", "wordcount"
-    ],
-    toolbar:
-      "undo redo | formatselect | bold italic underline | " +
-      "alignleft aligncenter alignright | bullist numlist outdent indent | " +
-      "link image media | code | removeformat | help",
-    menubar: false,
-    height: 420,
-    branding: false,
-    content_style: `
-      body { font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; line-height: 1.8; }
-      h2 { font-size: 1.4rem; }
-    `
+      tinymce.init({
+        selector: "#post-content-editor",
+        plugins: [
+          "advlist", "autolink", "lists", "link", "image", "charmap", "preview",
+          "anchor", "searchreplace", "visualblocks", "code", "fullscreen",
+          "insertdatetime", "media", "table", "help", "wordcount"
+        ],
+        toolbar:
+          "undo redo | formatselect | bold italic underline | " +
+          "alignleft aligncenter alignright | bullist numlist outdent indent | " +
+          "link image media | code | removeformat | help",
+        menubar: false,
+        height: 420,
+        branding: false,
+        content_style: `
+          body { font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; line-height: 1.8; }
+          h2 { font-size: 1.4rem; }
+        `,
+        setup: (editor) => {
+          editor.on('init', () => {
+            console.log('TinyMCE editor initialized');
+            resolve(editor);
+          });
+        }
+      });
+    } catch (err) {
+      console.error('TinyMCE init error:', err);
+      reject(err);
+    }
   });
 }
-// catch (err) {
-    //    console.warn('TinyMCE init error:', err);
-   // }
 
 function destroyTinyMCE() {
     try {
-        if (tinymce.get && tinymce.get('post-content-editor')) {
-            tinymce.get('post-content-editor').remove();
+        const editor = tinymce.get('post-content-editor');
+        if (editor) {
+            editor.remove();
+            console.log('TinyMCE editor destroyed');
         }
     } catch (err) {
         console.warn('TinyMCE destroy error:', err);
     }
 }
-
+*/
 //ends here 
 try {
     const payload = JSON.parse(atob(token.split('.')[1]));
@@ -109,7 +123,12 @@ function switchView(viewName, navLinks) {
         console.error(`View ${viewName}-view not found`);
         return;
     }
-    
+    /*
+    // Destroy TinyMCE before switching away from write view
+    if (viewName !== 'write') {
+        destroyTinyMCE();
+    }
+    */
     // Hide all views
     views.forEach(v => {
         v.classList.remove('active');
@@ -190,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Forms
     postForm.addEventListener('submit', handlePostSubmit);
 
-    // Event delegation for post actions (edit/delete)
+    // Event delegation for post actions (edit/delete) - SINGLE listener
     document.addEventListener('click', (e) => {
         // Handle edit button clicks
         if (e.target.closest('.btn-edit')) {
@@ -292,18 +311,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Event delegation for delete buttons (if using the previous setup)
-    document.addEventListener('click', (e) => {
-        if (e.target.closest('.btn-delete')) {
-            e.preventDefault();
-            const postCard = e.target.closest('.post-card');
-            const postIdAttr = postCard?.dataset.postId;
-            
-            if (postIdAttr) {
-                deletePost(parseInt(postIdAttr));
-            }
-        }
-    });
+    // REMOVED: Duplicate event delegation for delete buttons
+
+    // ...existing code...
 });
 
 function initializeWriteView(post = null) {
@@ -351,14 +361,34 @@ function initializeWriteView(post = null) {
         `;
     }).join('');
 
-    // Initialize TinyMCE editor for write view and set content if editing
-    // Use a small timeout to give DOM a moment; tinymce.init will handle however necessary
-    setTimeout(() => {
-        initializeTinyMCE();
-        if (post && tinymce.get && tinymce.get('post-content-editor')) {
-            tinymce.get('post-content-editor').setContent(post.content || '');
-        }
-    }, 50);
+    // Ensure DOM is ready before initializing TinyMCE
+    const editorElement = document.getElementById('post-content-editor');
+    if (!editorElement) {
+        console.error('Editor element not found in DOM');
+        showToast('Editor failed to load', 'error');
+        return;
+    }
+/*
+    // Initialize TinyMCE editor with proper async handling
+    initializeTinyMCE()
+        .then((editor) => {
+            // Always set content after init, whether new or edit
+            const contentToSet = post?.content || '';
+            if (contentToSet) {
+                editor.setContent(contentToSet);
+                console.log('Post content loaded into editor');
+            } else {
+                editor.setContent('');
+            }
+        })
+        .catch((err) => {
+            console.error('Failed to initialize TinyMCE:', err);
+            showToast('Editor failed to load. Using plain text mode.', 'warning');
+            // Fallback: ensure textarea is visible
+            if (editorElement) {
+                editorElement.style.display = 'block';
+            }
+        }); */
 }
 
 async function loadPosts() {
@@ -541,13 +571,16 @@ async function handlePostSubmit(e) {
         // Get content from TinyMCE if available, otherwise from the textarea
         let contentValue = '';
         try {
-            if (window.tinymce && tinymce.get && tinymce.get('post-content-editor')) {
-                contentValue = tinymce.get('post-content-editor').getContent();
+            const editor = tinymce.get('post-content-editor');
+            if (editor) {
+                contentValue = editor.getContent();
+                console.log('Content from TinyMCE editor');
             } else {
                 contentValue = form.content.value || '';
+                console.log('Content from textarea fallback');
             }
         } catch (err) {
-            // Fallback to textarea
+            console.warn('Error getting TinyMCE content:', err);
             contentValue = form.content.value || '';
         }
 
@@ -606,6 +639,9 @@ async function handlePostSubmit(e) {
         }
 
         showToast(`Post ${postId ? 'updated' : 'created'} successfully!`, 'success');
+
+        // Destroy editor before switching views
+        //destroyTinyMCE();
 
         // Reset form and return to posts
         form.reset();
@@ -1158,5 +1194,6 @@ async function loadSubscriberCount() {
         if (statsSubscribersEl) statsSubscribersEl.textContent = count;
     } catch (err) {
         console.log('Note: Subscriber endpoint may not be available yet');
+		showToast('Note: Subscriber endpoint may not be available yet', 'info');
     }
 }
