@@ -1,0 +1,28 @@
+:root {
+    /* theme Colors */
+    --accent-color: #132440;
+    --accent-common-color: #BF092F; 
+    --main-color: #132440;  
+    --border-color: #16476A; 
+    --input-register-color: #132440; 
+    --random-color: #16476A; 
+    
+    /* Utility Colors */
+    --text-color-dark: #132440; 
+    --text-color: #3B9797; 
+    --text-mix-color: #3B9797; 
+    --input-icon-color: #16476A;
+    --featured-category-color: #BF092F; 
+
+    /* Status Colors */
+    --success-color: #3B9797; 
+    --error-color: #BF092F;
+    --weak-color: #BF092F;
+    --medium-color: #3B9797;
+
+    /* border radius */
+    --btn-border-radius: 4px;
+    --post-border-radius: 8px;
+    --featured-post-border-radius: 12px;
+    --circle-border-radius: 100%;
+}

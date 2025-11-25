@@ -462,7 +462,11 @@ async function loadPosts() {
         list.innerHTML = postsHTML;
     } catch (err) {
         console.error('Error loading posts:', err);
-        list.innerHTML = `<p style="padding: 32px; text-align: center; grid-column: 1/-1; color: #d32f2f;">Error loading posts: ${err.message}</p>`;
+        list.innerHTML = `<div class="state-message" style="background: var(--border-color); padding: 32px; border-radius: var(--btn-border-radius); text-align: center; grid-column: 1/-1; color: #d32f2f;">
+					      <i class="fas fa-exclamation-triangle"></i>
+						  <p>Error loading posts: ${err.message}</p>
+						  <p> click here to login again to initialise a new token</p>
+						  </div>`;
     } finally {
         hideLoadingSpinner();
     }
