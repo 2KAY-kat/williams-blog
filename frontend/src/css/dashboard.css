@@ -716,12 +716,14 @@ body { font-family: 'Segoe UI', sans-serif; background: #f4f6f9; }
   color: #1a1a1a;
   margin: 0 0 0.5rem 0;
   word-break: break-word;
+  color: var(--text-color);
 }
 
 .profile-details p {
   color: #666;
   margin: 0;
   word-break: break-word;
+  color: var(--featured-category-color);
 }
 
 /* Profile Tabs */
