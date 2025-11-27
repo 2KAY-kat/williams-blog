@@ -18,4 +18,4 @@
         display: flex; 
         align-items: center;
         background-color: ${t}; /* Use the determined color */
-    `,document.body.appendChild(o),setTimeout(()=>{o.style.opacity="1",o.style.transform="translateX(0)"},100),setTimeout(()=>{o.style.opacity="0",o.style.transform="translateX(100%)",setTimeout(()=>{document.body.contains(o)&&document.body.removeChild(o)},300)},4e3)}const l="https://www.google.com/search?q=https://williams-blog-api.onrender.com";export{l as B,c as s};
+    `,document.body.appendChild(o),setTimeout(()=>{o.style.opacity="1",o.style.transform="translateX(0)"},100),setTimeout(()=>{o.style.opacity="0",o.style.transform="translateX(100%)",setTimeout(()=>{document.body.contains(o)&&document.body.removeChild(o)},300)},4e3)}const l="https://williams-blog-api.vercel.app";export{l as B,c as s};
