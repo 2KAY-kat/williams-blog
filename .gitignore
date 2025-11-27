@@ -3,4 +3,8 @@ node_modules
 fontawesome-free-6.6.0-web
 .vscode
 williams.session.sql
+.vercel
+.env*.local
+.env.production
+.env.development
 .env
