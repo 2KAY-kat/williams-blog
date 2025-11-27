@@ -17,7 +17,8 @@ const allowedOrigins = [
     "http://williams-blog.test", 
     "http://127.0.0.1:5173", 
     "http://127.0.0.1:5500", 
-    "http://localhost:5500"
+    "http://localhost:5500",
+    "https://williamskaphika.vercel.app/",
 ];
 
 app.use(cors({
@@ -25,7 +26,7 @@ app.use(cors({
         // Allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
         
-        if (allowedOrigins.indexOf(origin) !== -1 || origin.endsWith('.replit.dev')) {
+        if (allowedOrigins.indexOf(origin) !== -1 || origin.endsWith('.replit.dev') || origin.endsWith('.vercel.app')) {
             callback(null, true);
         } else {
             callback(new Error('Not allowed by CORS'));
@@ -102,6 +103,12 @@ app.use('/', postRoutes);
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+// Only start server if not in serverless environment (Vercel)
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+}
+
+// Export for Vercel serverless
+module.exports = app;
