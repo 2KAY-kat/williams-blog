@@ -1,21 +1,22 @@
 const mysql = require('mysql2/promise');
-const dotenv = require('dotenv');
+require('dotenv').config();
 
-dotenv.config();
+const ssl = process.env.DB_SSL === "true";
 
-// Load CA from env (base64) or local file
-let ca;
-if (process.env.DB_SSL_CA) {
-  ca = Buffer.from(process.env.DB_SSL_CA, 'base64');
-}
+const sslConfig = ssl
+  ? {
+      ca: Buffer.from(process.env.DB_SSL_CA, "base64"),
+      rejectUnauthorized: true,
+    }
+  : false;
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT) || 3306,
+  port: Number(process.env.DB_PORT),
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  ssl: ca ? { ca } : false,
+  ssl: sslConfig,
   waitForConnections: true,
   connectionLimit: 10,
 });
