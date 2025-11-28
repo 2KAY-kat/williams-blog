@@ -1,21 +1,23 @@
-const mysql = require('mysql2/promise');
-const dotenv = require('dotenv');
+const mysql = require("mysql2/promise");
+require("dotenv").config();
 
-dotenv.config();
-
-// Load CA from env (base64) or local file
-let ca;
-if (process.env.DB_SSL_CA) {
-  ca = Buffer.from(process.env.DB_SSL_CA, 'base64');
-}
+// Build SSL configuration based on environment variables
+const sslConfig = process.env.DB_SSL_CA
+  ? {
+      ca: Buffer.from(process.env.DB_SSL_CA, "base64").toString(),
+      rejectUnauthorized: false, // REQUIRED for Aiven CA
+    }
+  : process.env.DB_HOST && process.env.DB_HOST.includes("aivencloud.com")
+  ? { rejectUnauthorized: false } // SSL enabled but without custom CA for Aiven
+  : undefined; // No SSL for local development
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT) || 3306,
+  port: Number(process.env.DB_PORT),
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  ssl: ca ? { ca } : false,
+  ssl: sslConfig,
   waitForConnections: true,
   connectionLimit: 10,
 });
