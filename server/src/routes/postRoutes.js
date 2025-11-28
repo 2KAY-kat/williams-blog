@@ -29,6 +29,7 @@ router.get('/posts', authMiddleware, (req, res) => postController.index(req, res
 router.get('/posts/:id', authMiddleware, (req, res) => postController.show(req, res));
 router.post('/posts', authMiddleware, upload.single('image_file'), (req, res) => postController.store(req, res));
 router.put('/posts/:id', authMiddleware, upload.single('image_file'), (req, res) => postController.update(req, res));
+router.post('/posts/:id', authMiddleware, upload.single('image_file'), (req, res) => postController.update(req, res)); // Support POST for updates too
 router.delete('/posts/:id', authMiddleware, (req, res) => postController.destroy(req, res));
 
 // Categories Route (Simple enough to be here or in a separate controller, putting here for now as per PHP index.php)
