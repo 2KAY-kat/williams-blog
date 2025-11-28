@@ -101,7 +101,7 @@ app.get('/test-db', async (req, res) => {
 app.use('/', authRoutes);
 app.use('/', postRoutes);
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 
 // Only start server if not in serverless environment (Vercel)
 if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
