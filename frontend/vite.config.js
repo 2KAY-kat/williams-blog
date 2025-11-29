@@ -4,6 +4,7 @@ import { resolve } from "path";
 export default defineConfig({
     // Configure the root directory for the build/development server
     root: resolve(__dirname, "src"),
+    publicDir: resolve(__dirname, "public"),
 
     build: {
         // Output directory for the production build
