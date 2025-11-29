@@ -13,10 +13,10 @@ const app = express();
 
 // CORS Configuration
 const allowedOrigins = [
-    "http://localhost:5173", 
-    "http://williams-blog.test", 
-    "http://127.0.0.1:5173", 
-    "http://127.0.0.1:5500", 
+    "http://localhost:5173",
+    "http://williams-blog.test",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:5500",
     "http://localhost:5500",
     "https://williamskaphika.vercel.app",
 ];
@@ -25,7 +25,7 @@ app.use(cors({
     origin: function (origin, callback) {
         // Allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
-        
+
         if (allowedOrigins.indexOf(origin) !== -1 || origin.endsWith('.replit.dev') || origin.endsWith('.vercel.app')) {
             callback(null, true);
         } else {
@@ -40,6 +40,7 @@ app.use(cors({
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(require('method-override')('_method'));
 
 // Static Files
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));

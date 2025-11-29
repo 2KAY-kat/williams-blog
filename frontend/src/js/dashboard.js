@@ -118,7 +118,7 @@ function getActiveView() {
 function switchView(viewName, navLinks) {
     const views = document.querySelectorAll('.view');
     const targetView = document.getElementById(`${viewName}-view`);
-    
+
     if (!targetView) {
         console.error(`View ${viewName}-view not found`);
         return;
@@ -133,10 +133,10 @@ function switchView(viewName, navLinks) {
     views.forEach(v => {
         v.classList.remove('active');
     });
-    
+
     // Show selected view
     targetView.classList.add('active');
-    
+
     // Update active nav link
     navLinks.forEach(link => {
         if (link.dataset.view === viewName) {
@@ -145,7 +145,7 @@ function switchView(viewName, navLinks) {
             link.classList.remove('active');
         }
     });
-    
+
     // Update page title
     let viewTitle = 'Home';
     if (viewName === 'posts') viewTitle = 'My Posts';
@@ -153,10 +153,10 @@ function switchView(viewName, navLinks) {
     else if (viewName === 'profile') viewTitle = 'Profile';
     else if (viewName === 'subscribers') viewTitle = 'Subscribers';
     document.getElementById('page-title').textContent = viewTitle;
-    
+
     // Save state
     saveActiveView(viewName);
-    
+
     // Load data based on view
     if (viewName === 'posts') {
         loadPosts();
@@ -170,9 +170,9 @@ function switchView(viewName, navLinks) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
- // Hide spinner after page loads
+    // Hide spinner after page loads
     hideLoadingSpinner();
-    
+
     const navLinks = document.querySelectorAll('.nav-link');
     const postForm = document.getElementById('post-form');
     const addPostBtn = document.getElementById('add-post-btn');
@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
         link.addEventListener('click', (e) => {
             if (link.id === 'logout-btn') return;
             e.preventDefault();
-            
+
             const view = link.dataset.view;
             switchView(view, navLinks);
         });
@@ -216,24 +216,24 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const postCard = e.target.closest('.post-card');
             const postIdAttr = postCard?.dataset.postId;
-            
+
             if (postIdAttr) {
                 editPost(parseInt(postIdAttr));
             }
         }
-        
+
         // Handle delete button clicks
         if (e.target.closest('.btn-delete')) {
             e.preventDefault();
             const postCard = e.target.closest('.post-card');
             const postIdAttr = postCard?.dataset.postId;
-            
+
             if (postIdAttr) {
                 deletePost(parseInt(postIdAttr));
             }
         }
     });
-    
+
     // Logout
     logoutBtn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -245,12 +245,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial load
     loadCategories();
-    
+
     loadBloggerGreeting();
-    
+
     // Load dashboard stats
     loadDashboardStats();
-    
+
     // Onboarding card button handlers
     document.querySelectorAll('.onboarding-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -320,7 +320,7 @@ function initializeWriteView(post = null) {
     const form = document.getElementById('post-form');
     const writeTitle = document.getElementById('write-title');
     const writeSubtitle = document.getElementById('write-subtitle');
-    
+
     // Reset form
     form.reset();
     form.postid.value = '';
@@ -368,51 +368,51 @@ function initializeWriteView(post = null) {
         showToast('Editor failed to load', 'error');
         return;
     }
-/*
-    // Initialize TinyMCE editor with proper async handling
-    initializeTinyMCE()
-        .then((editor) => {
-            // Always set content after init, whether new or edit
-            const contentToSet = post?.content || '';
-            if (contentToSet) {
-                editor.setContent(contentToSet);
-                console.log('Post content loaded into editor');
-            } else {
-                editor.setContent('');
-            }
-        })
-        .catch((err) => {
-            console.error('Failed to initialize TinyMCE:', err);
-            showToast('Editor failed to load. Using plain text mode.', 'warning');
-            // Fallback: ensure textarea is visible
-            if (editorElement) {
-                editorElement.style.display = 'block';
-            }
-        }); */
+    /*
+        // Initialize TinyMCE editor with proper async handling
+        initializeTinyMCE()
+            .then((editor) => {
+                // Always set content after init, whether new or edit
+                const contentToSet = post?.content || '';
+                if (contentToSet) {
+                    editor.setContent(contentToSet);
+                    console.log('Post content loaded into editor');
+                } else {
+                    editor.setContent('');
+                }
+            })
+            .catch((err) => {
+                console.error('Failed to initialize TinyMCE:', err);
+                showToast('Editor failed to load. Using plain text mode.', 'warning');
+                // Fallback: ensure textarea is visible
+                if (editorElement) {
+                    editorElement.style.display = 'block';
+                }
+            }); */
 }
 
 async function loadPosts() {
     showLoadingSpinner();
     const list = document.getElementById('posts-container');
-    
+
     try {
         const res = await fetch(`${BASE_API_URL}/posts?blogger_id=${bloggerId}`, {
             headers: { Authorization: `Bearer ${token}` }
         });
-        
+
         if (!res.ok) {
             const errorData = await res.json();
             throw new Error(errorData.error || 'Failed to load posts');
         }
-        
+
         const posts = await res.json();
-        
+
         if (!Array.isArray(posts)) {
             throw new Error('Invalid posts data');
         }
         // Clear loading message
         list.innerHTML = '';
-        
+
         if (posts.length === 0) {
             list.innerHTML = `
             <a href="#" class="addpost-card" onclick="document.getElementById(\'add-post-btn\').click(); return false;"> <div class="onboarding-card">
@@ -458,7 +458,7 @@ async function loadPosts() {
                 </div>
             </div>
         `).join('');
-        
+
         list.innerHTML = postsHTML;
     } catch (err) {
         console.error('Error loading posts:', err);
@@ -479,13 +479,13 @@ async function loadCategories() {
         const res = await fetch(`${BASE_API_URL}/categories`);
 
         if (!res.ok) throw new Error(`Failed to fetch categories: ${res.status}`);
-        
+
         allCategories = await res.json();
-        
+
         if (!Array.isArray(allCategories)) {
             throw new Error('Categories response is not an array');
         }
-        
+
         console.log(`Successfully loaded ${allCategories.length} categories`);
     } catch (err) {
         console.error('Failed to load categories:', err);
@@ -497,19 +497,19 @@ function openModal(post = null) {
     const modal = document.getElementById('post-modal');
     const title = document.getElementById('modal-title');
     const form = document.getElementById('post-form');
-    
+
     // Reset form
     form.reset();
-    form.postid.value = ''; 
+    form.postid.value = '';
     document.querySelector('.btn-text').textContent = 'Save Post';
 
     // Categories Checkbox Logic
     const container = document.getElementById('categories-checkboxes');
-    const postCategoryNames = post?.categories || []; 
+    const postCategoryNames = post?.categories || [];
 
     container.innerHTML = allCategories.map(cat => {
         const isChecked = postCategoryNames.includes(cat.name);
-        
+
         return `
             <label>
                 <input type="checkbox" class="category-checkbox" name="categories" value="${cat.category_id}" 
@@ -518,7 +518,7 @@ function openModal(post = null) {
             </label>
         `;
     }).join('');
-    
+
     const currentImageUrlInput = document.getElementById('current-image-url');
     const imageFileInput = document.getElementById('image-file-input');
     const previewText = document.getElementById('image-preview-text');
@@ -533,7 +533,7 @@ function openModal(post = null) {
         title.textContent = 'Edit Post';
         form.title.value = post.title || '';
         form.content.value = post.content || '';
-        form.ispublished.checked = post.ispublished === 1 || post.ispublished === true; 
+        form.ispublished.checked = post.ispublished === 1 || post.ispublished === true;
         form.postid.value = post.postid;
 
         const imageUrl = post.main_image_url;
@@ -624,43 +624,36 @@ async function handlePostSubmit(e) {
 
         const postId = form.postid.value;
         const url = postId ? `${BASE_API_URL}/posts/${postId}` : `${BASE_API_URL}/posts`;
-
-        if (postId) {
-            formData.append('_method', 'PUT');
-        }
-
+        
         const res = await fetch(url, {
-            method: 'POST',
-            headers: {
-                Authorization: `Bearer ${token}`
-            },
+            method: postId ? 'PUT' : 'POST',
+            headers: { Authorization: `Bearer ${token}` },
             body: formData
         });
-
-        const result = await res.json();
         if (!res.ok) {
-            throw new Error(result.error || 'Failed to save post');
+            const err = await res.json();
+            throw new Error(err.error || 'Failed to save post');
         }
-
+        // [MOVED] Success logic is now correctly inside try block
         showToast(`Post ${postId ? 'updated' : 'created'} successfully!`, 'success');
-
+    
         // Destroy editor before switching views
-        //destroyTinyMCE();
+    //destroyTinyMCE();
 
-        // Reset form and return to posts
-        form.reset();
-        const navLinks = document.querySelectorAll('.nav-link');
-        switchView('posts', navLinks);
-        loadPosts();
-    } catch (err) {
-        console.error('Error submitting post:', err);
-        showToast(`Error: ${err.message}`, 'error');
-    } finally {
-        // Always restore the submit button state
-        submitBtn.disabled = false;
-        if (btnText) btnText.textContent = 'Save Post';
-        if (spinner) spinner.style.display = 'none';
-    }
+    // Reset form and return to posts
+    form.reset();
+    const navLinks = document.querySelectorAll('.nav-link');
+    switchView('posts', navLinks);
+    loadPosts();
+} catch (err) {
+    console.error('Error submitting post:', err);
+    showToast(`Error: ${err.message}`, 'error');
+} finally {
+    // Always restore the submit button state
+    submitBtn.disabled = false;
+    if (btnText) btnText.textContent = 'Save Post';
+    if (spinner) spinner.style.display = 'none';
+}
 }
 
 async function editPost(postId) {
@@ -669,18 +662,18 @@ async function editPost(postId) {
         const res = await fetch(`${BASE_API_URL}/posts/${postId}`, {
             headers: { Authorization: `Bearer ${token}` }
         });
-        
+
         if (!res.ok) {
             const errorData = await res.json();
             throw new Error(errorData.error || 'Failed to fetch post');
         }
-        
+
         const post = await res.json();
         console.log('Editing post:', post);
-        
+
         // Store the post globally before switching view
         currentEditingPost = post;
-        
+
         // Switch to write view
         const navLinks = document.querySelectorAll('.nav-link');
         switchView('write', navLinks);
@@ -694,21 +687,21 @@ async function editPost(postId) {
 
 async function deletePost(postId) {
     postToDelete = postId;
-    
+
     try {
         const res = await fetch(`${BASE_API_URL}/posts/${postId}`, {
             headers: { Authorization: `Bearer ${token}` }
         });
-        
+
         if (!res.ok) throw new Error('Failed to fetch post');
-        
+
         const post = await res.json();
-        
+
         // Populate modal with post info
         document.getElementById('delete-post-title').textContent = post.title;
-        document.getElementById('delete-post-date').textContent = 
+        document.getElementById('delete-post-date').textContent =
             `Created on ${new Date(post.created_at).toLocaleDateString()}`;
-        
+
         // Show modal
         showDeleteModal();
     } catch (err) {
@@ -739,20 +732,20 @@ async function loadProfile() {
         const res = await fetch(`${BASE_API_URL}/blogger`, {
             headers: { Authorization: `Bearer ${token}` }
         });
-        
+
         if (!res.ok) {
             const errorData = await res.json();
             throw new Error(errorData.error || 'Failed to load profile');
         }
-        
+
         const user = await res.json();
-        
+
         // Update profile header
         const displayName = document.getElementById('profile-display-name');
         const displayEmail = document.getElementById('profile-display-email');
         if (displayName) displayName.textContent = user.full_name || 'Blogger';
         if (displayEmail) displayEmail.textContent = user.email || '';
-        
+
         // Fill account form
         const accountForm = document.getElementById('account-form');
         if (accountForm) {
@@ -762,7 +755,7 @@ async function loadProfile() {
             accountForm.phone.value = user.phone || '';
             accountForm.bio.value = user.bio || '';
             accountForm.website.value = user.website || '';
-            
+
             // Update char count
             updateBioCharCount();
         }
@@ -783,15 +776,15 @@ async function loadProfile() {
 function setupTabListeners() {
     const tabButtons = document.querySelectorAll('.profile-tab-btn');
     const tabContents = document.querySelectorAll('.profile-tab-content');
-    
+
     tabButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             const tabName = btn.dataset.tab;
-            
+
             // Update active button
             tabButtons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            
+
             // Update active content
             tabContents.forEach(content => content.classList.remove('active'));
             document.getElementById(`${tabName}-tab`).classList.add('active');
@@ -812,12 +805,12 @@ function setupAccountFormListeners() {
     // Form submission
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+
         const submitBtn = form.querySelector('button[type="submit"]');
         const originalText = submitBtn.innerHTML;
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
-        
+
         try {
             const data = {
                 full_name: form.full_name.value.trim(),
@@ -827,7 +820,7 @@ function setupAccountFormListeners() {
                 bio: form.bio.value.trim() || null,
                 website: form.website.value.trim() || null
             };
-            
+
             const updateRes = await fetch(`${BASE_API_URL}/blogger`, {
                 method: 'PUT',
                 headers: {
@@ -836,12 +829,12 @@ function setupAccountFormListeners() {
                 },
                 body: JSON.stringify(data)
             });
-            
+
             if (!updateRes.ok) {
                 const err = await updateRes.json();
                 throw new Error(err.error || 'Update failed');
             }
-            
+
             showToast('Profile updated successfully!', 'success');
             loadProfile(); // Reload profile data
         } catch (err) {
@@ -870,8 +863,8 @@ function setupSecurityFormListeners() {
     if (toggleBtn) {
         toggleBtn.addEventListener('click', () => {
             passwordForm.classList.toggle('hidden');
-            toggleBtn.textContent = passwordForm.classList.contains('hidden') 
-                ? 'Change Password' 
+            toggleBtn.textContent = passwordForm.classList.contains('hidden')
+                ? 'Change Password'
                 : 'Hide';
         });
     }
@@ -891,10 +884,10 @@ function setupSecurityFormListeners() {
             const targetId = btn.dataset.target;
             const input = document.getElementById(targetId);
             const isPassword = input.type === 'password';
-            
+
             input.type = isPassword ? 'text' : 'password';
-            btn.innerHTML = isPassword 
-                ? '<i class="fas fa-eye-slash"></i>' 
+            btn.innerHTML = isPassword
+                ? '<i class="fas fa-eye-slash"></i>'
                 : '<i class="fas fa-eye"></i>';
         });
     });
@@ -908,7 +901,7 @@ function setupSecurityFormListeners() {
     // Password form submission
     passwordForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+
         const currentPassword = document.getElementById('current-password').value;
         const newPassword = document.getElementById('new-password').value;
         const confirmPassword = document.getElementById('confirm-password').value;
@@ -975,11 +968,11 @@ function setupPreferencesListeners() {
             showToast('Preference settings comming soon!', 'info');
         });
     }
-   // if (!preferencesForm) return;
+    // if (!preferencesForm) return;
 
     // preferencesForm.addEventListener('submit', async (e) => {
     //     e.preventDefault();
-        
+
     //     const preferences = {
     //         notify_comments: document.getElementById('notify-comments').checked,
     //         notify_subscribers: document.getElementById('notify-subscribers').checked,
@@ -1040,7 +1033,7 @@ function setupPreferencesListeners() {
 // function setupAvatarUpload() {
 //     const uploadBtn = document.getElementById('avatar-upload-btn');
 //     const fileInput = document.getElementById('avatar-file-input');
-    
+
 //     if (uploadBtn) {
 //         uploadBtn.addEventListener('click', () => fileInput.click());
 //     }
@@ -1113,7 +1106,7 @@ function updatePasswordStrength() {
 }
 
 // async function deleteAccountPermanently() {
-    
+
 //     // try {
 //     //     const res = await fetch(`${BASE_API_URL}/blogger`, {
 //     //         method: 'DELETE',
@@ -1140,9 +1133,9 @@ async function loadBloggerGreeting() {
         const res = await fetch(`${BASE_API_URL}/blogger`, {
             headers: { Authorization: `Bearer ${token}` }
         });
-        
+
         if (!res.ok) return;
-        
+
         const user = await res.json();
         const nameElement = document.getElementById('blogger-name');
         if (nameElement && user.full_name) {
@@ -1159,23 +1152,23 @@ async function loadDashboardStats() {
         const res = await fetch(`${BASE_API_URL}/posts?blogger_id=${bloggerId}`, {
             headers: { Authorization: `Bearer ${token}` }
         });
-        
+
         if (!res.ok) return;
-        
+
         const posts = await res.json();
-        
+
         if (!Array.isArray(posts)) return;
-        
+
         const totalPosts = posts.length;
         const publishedPosts = posts.filter(p => p.ispublished === 1 || p.ispublished === true).length;
-        
+
         // Update stat elements
         const statsPostsEl = document.getElementById('stat-posts');
         const statsPublishedEl = document.getElementById('stat-published');
-        
+
         if (statsPostsEl) statsPostsEl.textContent = totalPosts;
         if (statsPublishedEl) statsPublishedEl.textContent = publishedPosts;
-        
+
         // Load subscriber count
         loadSubscriberCount();
     } catch (err) {
@@ -1188,16 +1181,16 @@ async function loadSubscriberCount() {
         const res = await fetch(`${BASE_API_URL}/subscribers?blogger_id=${bloggerId}`, {
             headers: { Authorization: `Bearer ${token}` }
         });
-        
+
         if (!res.ok) return;
-        
+
         const subscribers = await res.json();
         const count = Array.isArray(subscribers) ? subscribers.length : 0;
-        
+
         const statsSubscribersEl = document.getElementById('stat-subscribers');
         if (statsSubscribersEl) statsSubscribersEl.textContent = count;
     } catch (err) {
         console.log('Note: Subscriber endpoint may not be available yet');
-		showToast('Note: Subscriber endpoint may not be available yet', 'info');
+        showToast('Note: Subscriber endpoint may not be available yet', 'info');
     }
 }
