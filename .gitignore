@@ -54,3 +54,8 @@ desktop.ini
 server/Response*.rest
 server/scripts/data.sql
 server/scripts/insert_posts.js
+
+# Docker and deployment files
+docker-compose.yml
+Dockerfile
+nginx.conf
